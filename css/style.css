@@ -65,7 +65,7 @@ h1 {
 /* || CLASS SPECIFIC */
 
 .hidden {
-    display: none !important;
+    opacity: 0;
 }
 
 .nav-button {
@@ -112,6 +112,19 @@ h1 {
 
 .new-window-icon {
     width: 20px;
+}
+
+.content {
+    position: relative;
+    overflow: auto;
+}
+
+.content-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s ease-in-out;
 }
 
 .summary-view {
