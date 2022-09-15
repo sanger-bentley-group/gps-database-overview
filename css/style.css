@@ -24,6 +24,7 @@ header {
 
     display: flex;
     align-items: center;
+    justify-content: center;
 }
 
 nav {
@@ -31,7 +32,6 @@ nav {
 
     background-color: #C7C7FF;
     color: white;
-
 
     display: flex;
     align-items: center;
@@ -47,6 +47,8 @@ nav ul {
 }
 
 article {
+    display: flex;
+    align-items: center;
     flex-grow: 1;
 }
 
@@ -62,7 +64,7 @@ h1 {
 /* || CLASS SPECIFIC */
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .nav-button {
@@ -111,13 +113,68 @@ h1 {
     width: 20px;
 }
 
+.summary-view-left-container {
+    display: flex;
+    gap: 2em;
+}
+
+.summary-view-left-container-left-icon {
+    width: 80px;
+}
+
+.summary-view-left-container-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px 0px;
+    white-space: nowrap;
+}
+
+.summary-view-left-container-right-top {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
+.summary-view-left-container-right-bottom {
+    font-size: 2em;
+}
+
 .footer-hyperlink {
     color: white;
     text-decoration: none;
     font-size: 1em;
     margin: 5px;
+    white-space: nowrap;
 }
 
 .footer-hyperlink:hover {
     text-decoration: underline;
+}
+
+/* || ID SPECIFIC */
+
+#summary-view {
+    display: flex;
+    gap: 3em;
+    width: 90vw;
+    margin: 2em auto;
+}
+
+#summary-view:before {
+    content: "";
+    border: 1px solid #6868BE;
+    align-self: stretch;
+}
+
+#summary-view-left {
+    flex: 1;
+    order: -1;
+
+    display:flex;
+    flex-direction: column;
+    gap: 4em;
+}
+
+#summary-view-right {
+    flex: 3;
 }

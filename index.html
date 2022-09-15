@@ -18,7 +18,7 @@
         <li><button id="by-country-view-button" class="nav-button">By Country</button></li>
         <li class="monocle-item">
           <a class="monocle-link" href="https://monocle.sanger.ac.uk/login" target="_blank">
-            <img class="new-window-icon" src="images/new_window_icon.svg" alt="new_window_icon">
+            <img class="new-window-icon" src="images/new_window_icon.svg" alt="New Window Icon">
             Retrieve GPS Data via Monocle
           </a>
         </li>
@@ -26,7 +26,50 @@
     </nav>
     <article>
       <section id="summary-view">
-        <!-- Summary view content -->
+        <div id="summary-view-left">
+          <div class="summary-view-left-container">
+            <div class="summary-view-left-container-left">
+              <img class="summary-view-left-container-left-icon" src="images/dna_icon.svg" alt="DNA Icon">
+            </div>
+            <div class="summary-view-left-container-right">
+              <div class="summary-view-left-container-right-top">
+                Samples
+              </div>
+              <div class="summary-view-left-container-right-bottom">
+                <div id="total-sample-count"></div>
+              </div>
+            </div>
+          </div>
+          <div class="summary-view-left-container">
+            <div class="summary-view-left-container-left">
+              <img class="summary-view-left-container-left-icon" src="images/globe_icon.svg" alt="Globe Icon">
+            </div>
+            <div class="summary-view-left-container-right">
+              <div class="summary-view-left-container-right-top">
+                Countries
+              </div>
+              <div class="summary-view-left-container-right-bottom">
+                <div id="total-country-count"></div>
+              </div>
+            </div>
+          </div>
+          <div class="summary-view-left-container">
+            <div class="summary-view-left-container-left">
+              <img class="summary-view-left-container-left-icon" src="images/calendar_icon.svg" alt="Calendar Icon">
+            </div>
+            <div class="summary-view-left-container-right">
+              <div class="summary-view-left-container-right-top">
+                Year Range
+              </div>
+              <div class="summary-view-left-container-right-bottom">
+                <div id="total-year-range-value">1989 - 2020</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="summary-view-right">
+          <!-- Summary view right side content -->
+        </div>
       </section>
       <section id="by-country-view" class="hidden">
         <!-- By Country view content -->
