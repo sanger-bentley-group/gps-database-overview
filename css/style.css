@@ -61,6 +61,7 @@ h1 {
     font-size: 3em;
 }
 
+
 /* || CLASS SPECIFIC */
 
 .hidden {
@@ -113,6 +114,29 @@ h1 {
     width: 20px;
 }
 
+.summary-view {
+    display: flex;
+    align-items: center;
+    gap: 3em;
+    width: 90vw;
+    margin: 2em auto;
+}
+
+.summary-view:before {
+    content: "";
+    border: 1px solid #6868BE;
+    align-self: stretch;
+}
+
+.summary-view-left {
+    flex: 1;
+    order: -1;
+
+    display:flex;
+    flex-direction: column;
+    gap: 4em;
+}
+
 .summary-view-left-container {
     display: flex;
     gap: 2em;
@@ -121,6 +145,7 @@ h1 {
 .summary-view-left-container-left-icon {
     width: 80px;
 }
+
 
 .summary-view-left-container-right {
     display: flex;
@@ -139,6 +164,31 @@ h1 {
     font-size: 2em;
 }
 
+.summary-view-right {
+    flex: 3;
+
+    display:flex;
+    flex-direction: column;
+    gap: 4em;
+}
+
+.summary-view-right-container {
+    display: flex;
+    justify-content: space-around;
+}
+
+.summary-view-right-container-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+}
+
+.summary-view-right-container-container-title {
+    font-size: 1.3em;
+    font-weight: bold;
+}
+
 .footer-hyperlink {
     color: white;
     text-decoration: none;
@@ -151,30 +201,10 @@ h1 {
     text-decoration: underline;
 }
 
+
 /* || ID SPECIFIC */
 
-#summary-view {
-    display: flex;
-    gap: 3em;
+#world-map {
     width: 90vw;
-    margin: 2em auto;
-}
-
-#summary-view:before {
-    content: "";
-    border: 1px solid #6868BE;
-    align-self: stretch;
-}
-
-#summary-view-left {
-    flex: 1;
-    order: -1;
-
-    display:flex;
-    flex-direction: column;
-    gap: 4em;
-}
-
-#summary-view-right {
-    flex: 3;
+    max-height: 80vh;
 }

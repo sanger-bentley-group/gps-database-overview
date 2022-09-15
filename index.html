@@ -25,12 +25,10 @@
       </ul>
     </nav>
     <article>
-      <section id="summary-view">
-        <div id="summary-view-left">
+      <section class="summary-view">
+        <div class="summary-view-left">
           <div class="summary-view-left-container">
-            <div class="summary-view-left-container-left">
-              <img class="summary-view-left-container-left-icon" src="images/dna_icon.svg" alt="DNA Icon">
-            </div>
+            <img class="summary-view-left-container-left-icon" src="images/dna_icon.svg" alt="DNA Icon">
             <div class="summary-view-left-container-right">
               <div class="summary-view-left-container-right-top">
                 Samples
@@ -41,9 +39,7 @@
             </div>
           </div>
           <div class="summary-view-left-container">
-            <div class="summary-view-left-container-left">
-              <img class="summary-view-left-container-left-icon" src="images/globe_icon.svg" alt="Globe Icon">
-            </div>
+            <img class="summary-view-left-container-left-icon" src="images/globe_icon.svg" alt="Globe Icon">
             <div class="summary-view-left-container-right">
               <div class="summary-view-left-container-right-top">
                 Countries
@@ -54,9 +50,7 @@
             </div>
           </div>
           <div class="summary-view-left-container">
-            <div class="summary-view-left-container-left">
-              <img class="summary-view-left-container-left-icon" src="images/calendar_icon.svg" alt="Calendar Icon">
-            </div>
+            <img class="summary-view-left-container-left-icon" src="images/calendar_icon.svg" alt="Calendar Icon">
             <div class="summary-view-left-container-right">
               <div class="summary-view-left-container-right-top">
                 Year Range
@@ -67,12 +61,34 @@
             </div>
           </div>
         </div>
-        <div id="summary-view-right">
-          <!-- Summary view right side content -->
-        </div>
+        <div class="summary-view-right">
+          <div class="summary-view-right-container">
+            <div class="summary-view-right-container-container">
+              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-title">Country</div>
+            </div>
+            <div class="summary-view-right-container-container">
+              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-title">Vaccine Period</div>
+            </div>
+            <div class="summary-view-right-container-container">
+              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-title">Manifestation</div>
+            </div>
+          </div>
+          <div class="summary-view-right-container">
+            <div class="summary-view-right-container-container">
+              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-title">Year of Collection</div>
+            </div>
+            <div class="summary-view-right-container-container">
+              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-title">Age</div>
+            </div>
+          </div>
       </section>
-      <section id="by-country-view" class="hidden">
-        <!-- By Country view content -->
+      <section class="by-country-view hidden">
+        <object id="world-map" type="image/svg+xml" data="images/world-map.svg"></object>
       </section>
     </article>
     <footer>
