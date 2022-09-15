@@ -14,26 +14,26 @@
     </header>
     <nav>
       <ul>
-        <li><button class="nav-button nav-button-active">Summary</button></li>
-        <li><button class="nav-button">By Country</button></li>
+        <li><button id="summary-view-button" class="nav-button nav-button-active">Summary</button></li>
+        <li><button id="by-country-view-button" class="nav-button">By Country</button></li>
         <li class="monocle-item">
           <a class="monocle-link" href="https://monocle.sanger.ac.uk/login" target="_blank">
-            <img class="new_window_icon" src="images/new_window_icon.svg" alt="new_window_icon">
+            <img class="new-window-icon" src="images/new_window_icon.svg" alt="new_window_icon">
             Retrieve GPS Data via Monocle
           </a>
         </li>
       </ul>
     </nav>
     <article>
-      <section>
+      <section id="summary-view">
         <!-- Summary view content -->
       </section>
-      <section>
+      <section id="by-country-view" class="hidden">
         <!-- By Country view content -->
       </section>
     </article>
     <footer>
-      <a href="https://www.pneumogen.net/gps/" target="_blank">The Global Pneumococcal Sequencing Project</a>
+      <a class="footer-hyperlink" href="https://www.pneumogen.net/gps/" target="_blank">The Global Pneumococcal Sequencing Project</a>
     </footer>
     <script src="scripts/main.js"></script>
   </body>

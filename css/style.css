@@ -50,11 +50,20 @@ article {
     flex-grow: 1;
 }
 
+footer {
+    background-color: #6868BE;
+    padding: 5px;
+}
+
 h1 {
     font-size: 3em;
 }
 
 /* || CLASS SPECIFIC */
+
+.hidden {
+    display: none;
+}
 
 .nav-button {
     height: 50px;
@@ -98,6 +107,17 @@ h1 {
     gap: 0.5em;
 }
 
-.new_window_icon {
+.new-window-icon {
     width: 20px;
+}
+
+.footer-hyperlink {
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    margin: 5px;
+}
+
+.footer-hyperlink:hover {
+    text-decoration: underline;
 }
