@@ -21,31 +21,13 @@
                 text-anchor: middle
         }
 <!--Additional class for countires with available data-->
-      .country-label {
-            fill: #8094A0;
-            display: block;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 1em;
+        .country-available {
+            fill: #B7BCD8;
             transition: all 0.2s ease-out;
         }
-
-        .country-label-bg {
-            fill-opacity: 0.5;
-            transition: all 0.2s ease-out;
-        }
-
-        .country-label-bg:hover, .country-label-bg-active {
-            fill-opacity: 0.9;
-        }
-
-
-        .country-label:hover, .country-label-active {
-            fill: #4B9DEA;
-            font-weight: bold;
-        }
-
-        .country-label text {
-            fill: #000000;
+          
+        .country-available:hover {
+            fill: #6868BE;
         }
     </style>
   </defs>
