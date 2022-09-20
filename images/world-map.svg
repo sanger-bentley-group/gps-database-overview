@@ -23,11 +23,12 @@
 <!--Additional class for countires with available data-->
         .country-available {
             fill: #B7BCD8;
-            transition: all 0.2s ease-out;
+            transition: all 0.3s;
         }
           
-        .country-available:hover {
+        .country-available:hover, .country-active {
             fill: #6868BE;
+            transition: all 0.3s;
         }
     </style>
   </defs>

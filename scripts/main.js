@@ -57,7 +57,7 @@ async function buildContent() {
     // Build Summary View left panel
     buildSummaryLeft(data);
     buildByCountryMap(data, map);
-    buildByCountryList(data, alpha2);
+    buildByCountryList(data, alpha2, map);
 };
 
 
@@ -89,14 +89,13 @@ function buildByCountryMap(data, map) {
 
     countries.forEach(country => {
         const countryGroup = map.querySelector(`#${country}`);
-
         // Highlight country
         countryGroup.classList.add('country-available');
     });
 };
 
 
-function buildByCountryList(data, alpha2) {
+function buildByCountryList(data, alpha2, map) {
     const countries = Object.keys(data['country']);
     const countryList = document.querySelector('#country-list');
 
@@ -104,6 +103,19 @@ function buildByCountryList(data, alpha2) {
         const listItem = document.createElement('li');
         listItem.appendChild(document.createTextNode(alpha2[country]));
         listItem.setAttribute('alpha2', country);
+
+        listItem.addEventListener('mouseover', () => {
+            const countryGroup = map.querySelector(`#${country}`);
+            // Highlight country
+            countryGroup.classList.add('country-active');
+        });
+
+        listItem.addEventListener('mouseout', () => {
+            const countryGroup = map.querySelector(`#${country}`);
+            // Un-highlight country
+            countryGroup.classList.remove('country-active');
+        });
+
         countryList.appendChild(listItem);
     });
 };
