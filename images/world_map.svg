@@ -2089,7 +2089,7 @@
         <path id="path2762" d="M782.066 183.715c0-.274.327-.336.497-.445.037.286-.247.456-.497.445"/>
         <path id="path2760" d="M782.956 183.453c0 .136.069.224.211.262a.422.422 0 0 0-.211-.262"/>
       </g>
-<!--<circle id="hk_" fill="#B9B9B9" fill-opacity="0" cx="783.352" cy="183.484" r="1.454"/>-->
+      <circle id="hk_" fill="#B9B9B9" fill-opacity="1" cx="783.352" cy="183.484" r="1.454"/>
     </g>
     <g id="MO">
       <path id="mo-" d="M781.255 183.715c.047-.029.087.153.055-.053a.58.58 0 0 1 .036.314c-.036-.087-.055-.174-.08-.261"/>
@@ -2937,13 +2937,13 @@
     <text x="590" y="127" id="AZ-label">Azerbaijan</text>
     <text x="513" y="115" id="BA-label">Bosnia and Herzegovina</text>
     <text x="303" y="212" id="BB-label">Barbados</text>
-    <text x="711" y="179" id="BD-label">Bangladesh</text>
+    <text x="721" y="179" id="BD-label">Bangladesh</text>
     <text x="480" y="95" id="BE-label">Belgium</text>
     <text x="461" y="215" id="BF-label">Burkina Faso</text>
     <text x="532" y="119" id="BG-label">Bulgaria</text>
     <text x="602" y="170" id="BH-label">Bahrain</text>
     <text x="549" y="264" id="BI-label">Burundi</text>
-    <text x="472" y="224" id="BJ-label">Benin</text>
+    <text x="475" y="230" id="BJ-label">Benin</text>
     <text x="295" y="199" id="BL-label">Saint Barthélemy</text>
     <text x="295" y="151" id="BM-label">Bermuda</text>
     <text x="784" y="239" id="BN-label">Brunei</text>
@@ -2953,17 +2953,17 @@
     <text x="261" y="178" id="BS-label">Bahamas</text>
     <text x="710" y="167" id="BT-label">Bhutan</text>
     <text x="534" y="325" id="BW-label">Botswana</text>
-    <text x="536" y="85" id="BY-label">Belarus</text>
+    <text x="540" y="90" id="BY-label">Belarus</text>
     <text x="223" y="199" id="BZ-label">Belize</text>
-    <text x="194" y="80" id="CA-label">Canada</text>
-    <text x="526" y="266" id="CD-label">Congo (Dem. Rep.)</text>
-    <text x="524" y="232" id="CF-label">Central African Republic</text>
+    <text x="230" y="80" id="CA-label">Canada</text>
+    <text x="535" y="266" id="CD-label">DR Congo</text>
+    <text x="524" y="237" id="CF-label">Central African Republic</text>
     <text x="514" y="250" id="CG-label">Congo</text>
     <text x="489" y="106" id="CH-label">Switzerland</text>
-    <text x="444" y="240" id="CI-label">Côte d&apos;Ivoire</text>
+    <text x="455" y="235" id="CI-label">Ivory Coast</text>
     <text x="8" y="302" id="CK-label">Cook Islands</text>
     <text x="274" y="350" id="CL-label">Chile</text>
-    <text x="500" y="230" id="CM-label">Cameroon</text>
+    <text x="505" y="240" id="CM-label">Cameroon</text>
     <text x="728" y="141" id="CN-label">China</text>
     <text x="263" y="240" id="CO-label">Colombia</text>
     <text x="233" y="223" id="CR-label">Costa Rica</text>
@@ -3010,6 +3010,7 @@
     <text x="864" y="210" id="GU-label">Guam</text>
     <text x="424" y="216" id="GW-label">Guinea-Bissau</text>
     <text x="299" y="235" id="GY-label">Guyana</text>
+    <text x="785" y="185" id="HK-label">Hong Kong</text>
     <text x="229" y="207" id="HN-label">Honduras</text>
     <text x="509" y="109" id="HR-label">Croatia</text>
     <text x="266" y="193" id="HT-label">Haiti</text>
@@ -3018,7 +3019,7 @@
     <text x="450" y="86" id="IE-label">Ireland</text>
     <text x="560" y="154" id="IL-label">Israel</text>
     <text x="459" y="84" id="IM-label">Isle of Man</text>
-    <text x="679" y="200" id="IN-label">India</text>
+    <text x="689" y="190" id="IN-label">India</text>
     <text x="583" y="149" id="IQ-label">Iraq</text>
     <text x="609" y="151" id="IR-label">Iran</text>
     <text x="432" y="53" id="IS-label">Iceland</text>
@@ -3035,7 +3036,7 @@
     <text x="292" y="201" id="KN-label">Saint Kitts and Nevis</text>
     <text x="792" y="126" id="KP-label">North Korea</text>
     <text x="794" y="135" id="KR-label">South Korea</text>
-    <text x="594" y="161" id="KW-label">Kuwait</text>
+    <text x="600" y="165" id="KW-label">Kuwait</text>
     <text x="245" y="192" id="KY-label">Cayman Islands</text>
     <text x="632" y="103" id="KZ-label">Kazakhstan</text>
     <text x="750" y="196" id="LA-label">Laos</text>
@@ -3067,13 +3068,13 @@
     <text x="505" y="141" id="MT-label">Malta</text>
     <text x="622" y="316" id="MU-label">Mauritius</text>
     <text x="652" y="242" id="MV-label">Maldives</text>
-    <text x="560" y="295" id="MW-label">Malawi</text>
+    <text x="565" y="300" id="MW-label">Malawi</text>
     <text x="190" y="179" id="MX-label">Mexico</text>
     <text x="769" y="240" id="MY-label">Malaysia</text>
     <text x="564" y="319" id="MZ-label">Mozambique</text>
     <text x="517" y="325" id="NA-label">Namibia</text>
     <text x="913" y="319" id="NC-label">New Caledonia</text>
-    <text x="488" y="198" id="NE-label">Niger</text>
+    <text x="500" y="205" id="NE-label">Niger</text>
     <text x="919" y="338" id="NF-label">Norfolk Island</text>
     <text x="490" y="230" id="NG-label">Nigeria</text>
     <text x="231" y="213" id="NI-label">Nicaragua</text>
@@ -3102,7 +3103,7 @@
     <text x="617" y="319" id="RE-label">Réunion</text>
     <text x="531" y="109" id="RO-label">Romania</text>
     <text x="521" y="115" id="RS-label">Serbia</text>
-    <text x="700" y="70" id="RU-label">Russia</text>
+    <text x="700" y="70" id="RU-label">Russian Federation</text>
     <text x="549" y="259" id="RW-label">Rwanda</text>
     <text x="574" y="170" id="SA-label">Saudi Arabia</text>
     <text x="913" y="282" id="SB-label">Solomon Islands</text>
@@ -3111,11 +3112,11 @@
     <text x="510" y="61" id="SE-label">Sweden</text>
     <text x="754" y="249" id="SG-label">Singapore</text>
     <text x="448" y="306" id="SH-label">Saint Helena, Ascension and Tristan da Cunha</text>
-    <text x="506" y="108" id="SI-label">Slovenia</text>
+    <text x="506" y="110" id="SI-label">Slovenia</text>
     <text x="517" y="101" id="SK-label">Slovakia</text>
     <text x="433" y="226" id="SL-label">Sierra Leone</text>
     <text x="500" y="115" id="SM-label">San Marino</text>
-    <text x="426" y="207" id="SN-label">Senegal</text>
+    <text x="426" y="210" id="SN-label">Senegal</text>
     <text x="594" y="237" id="SO-label">Somalia</text>
     <text x="310" y="241" id="SR-label">Suriname</text>
     <text x="548" y="228" id="SS-label">South Sudan</text>
@@ -3156,7 +3157,7 @@
     <text x="521" y="119" id="XK-label">Kosovo</text>
     <text x="600" y="204" id="YE-label">Yemen</text>
     <text x="591" y="294" id="YT-label">Mayotte</text>
-    <text x="533" y="343" id="ZA-label">South Africa</text>
+    <text x="533" y="353" id="ZA-label">South Africa</text>
     <text x="539" y="300" id="ZM-label">Zambia</text>
     <text x="546" y="313" id="ZW-label">Zimbabwe</text>
   </g>
