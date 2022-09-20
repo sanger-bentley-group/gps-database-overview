@@ -9,26 +9,39 @@
   <defs>
     <style type="text/css">
       .land {
-                fill: #e0e0e0;
-                stroke:#ffffff;
-                stroke-width:1;
+                fill: #E0E0E0;
+                stroke:#FFFFFF;
+                stroke-width:0.5;
                 fill-rule:evenodd;
             }
 
         text {
-                display: none;
+                font-family: Arial, Helvetica, sans-serif;
+                font-size: 1em;
+                font-weight: bold;
+                fill: #000000;
+                stroke: #FFFFFF;
+                stroke-width: 2px;
+                paint-order: stroke fill;
+
+                opacity: 0;
                 pointer-events: none;
-                text-anchor: middle
+                text-anchor: middle;
+                transition: 0.3s;
         }
 <!--Additional class for countires with available data-->
         .country-available {
             fill: #B7BCD8;
-            transition: all 0.3s;
+            transition: 0.3s;
         }
           
         .country-available:hover, .country-active {
             fill: #6868BE;
-            transition: all 0.3s;
+            transition: 0.3s;
+        }
+
+        .country-label-available {
+            opacity: 100;
         }
     </style>
   </defs>

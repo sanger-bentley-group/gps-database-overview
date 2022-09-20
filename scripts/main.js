@@ -102,19 +102,23 @@ function buildByCountryList(data, alpha2, map) {
     countries.forEach(country => {
         const listItem = document.createElement('li');
         listItem.appendChild(document.createTextNode(alpha2[country]));
-        listItem.setAttribute('alpha2', country);
 
-        listItem.addEventListener('mouseover', () => {
-            const countryGroup = map.querySelector(`#${country}`);
+        const countryGroup = map.querySelector(`#${country}`);
+        const countryLabel = map.querySelector(`#${country}-label`);
+
+
+        Array(countryGroup, listItem).forEach(elem => (elem.addEventListener('mouseover', () => {
             // Highlight country
             countryGroup.classList.add('country-active');
-        });
+            countryLabel.classList.add('country-label-available');
+        })));
 
-        listItem.addEventListener('mouseout', () => {
+        Array(countryGroup, listItem).forEach(elem => (elem.addEventListener('mouseout', () => {
             const countryGroup = map.querySelector(`#${country}`);
             // Un-highlight country
             countryGroup.classList.remove('country-active');
-        });
+            countryLabel.classList.remove('country-label-available');
+        })));
 
         countryList.appendChild(listItem);
     });
