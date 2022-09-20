@@ -88,7 +88,15 @@
           </div>
       </section>
       <section class="content-container by-country-view hidden">
-        <object id="world-map" type="image/svg+xml" data="images/world-map.svg"></object>
+        <div class="by-country-view-map">
+          <object id="world-map" type="image/svg+xml" data="images/world-map.svg"></object>
+        </div>
+        <div class="by-country-view-list">
+          <input type="text" id="country-list-search" placeholder="Search for countries..">
+          <ul id="country-list">
+            <!-- To be populated by main.js -->
+          </ul>
+        </div>
       </section>
     </article>
     <footer>

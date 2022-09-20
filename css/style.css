@@ -2,6 +2,24 @@
 
 * {
     font-family:  Helvetica, Arial, sans-serif;
+
+    scrollbar-color: grey transparent;
+    scrollbar-width: thin;
+
+    cursor: default;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+  
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+  
+*::-webkit-scrollbar-thumb {
+    background-color: grey;
 }
 
 
@@ -12,6 +30,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    overflow: hidden;
 }
 
 header {
@@ -110,6 +129,10 @@ h1 {
     gap: 0.5em;
 }
 
+.monocle-link:hover  {
+    text-decoration: underline;
+}
+
 .new-window-icon {
     width: 20px;
 }
@@ -202,6 +225,36 @@ h1 {
     font-weight: bold;
 }
 
+.by-country-view {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.by-country-view-list {
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.by-country-view-list ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.by-country-view-list ul li {
+    padding: 10px;
+    border-radius: 10px;
+    transition-duration: 0.3s;
+}
+
+.by-country-view-list ul li:hover {
+    background-color: #B8B8FF;
+}
+
 .footer-hyperlink {
     color: white;
     text-decoration: none;
@@ -218,6 +271,23 @@ h1 {
 /* || ID SPECIFIC */
 
 #world-map {
-    width: 90vw;
+    width: 80vw;
     max-height: 80vh;
+}
+
+#country-list-search {
+    background-image: url('/images/search_icon.svg');
+    background-position: 10px 12px;
+    background-size: 1em;
+    background-repeat: no-repeat;
+
+    font-size: 1em;
+    padding: 12px 20px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+}
+
+#country-list {
+    max-height: 80vh;
+    overflow-y: auto;
 }

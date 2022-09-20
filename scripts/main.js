@@ -1,13 +1,14 @@
 navInit();
+filterInit();
 buildContent();
 
 
 // Enable nav interactivity
 function navInit() {
-    const summaryViewButton = document.querySelector("#summary-view-button");
-    const byCountryViewButton = document.querySelector("#by-country-view-button");
-    const summaryView = document.querySelector(".summary-view");
-    const byCountryView = document.querySelector(".by-country-view");
+    const summaryViewButton = document.querySelector('#summary-view-button');
+    const byCountryViewButton = document.querySelector('#by-country-view-button');
+    const summaryView = document.querySelector('.summary-view');
+    const byCountryView = document.querySelector('.by-country-view');
 
     summaryViewButton.addEventListener('click', () => {
         summaryView.classList.remove('hidden')
@@ -25,26 +26,49 @@ function navInit() {
 };
 
 
+// Enable country list filering
+function filterInit() {
+    const countryListSearch = document.querySelector('#country-list-search')
+    const countryList = document.querySelector('#country-list')
+    
+    countryListSearch.addEventListener('keyup', () => {
+        const filterValue = countryListSearch.value.toUpperCase();
+        const countryListItems = countryList.querySelectorAll('li');
+
+        countryListItems.forEach(item => {
+            const itemValue = item.innerHTML;
+            if (itemValue.toLocaleUpperCase().indexOf(filterValue) != -1) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+}
+
+
 // Building content from data.json
 async function buildContent() {
     const mapObject = document.querySelector('#world-map');
 
-    // Await for both data.json and map loaded before proceeding
-    const [data, map] = await getDataAndMap('data/data.json', mapObject);
+    // Await for data.json, alpha2.json and map loaded before proceeding
+    const [data, alpha2, map] = await getData('data/data.json', 'data/alpha2.json', mapObject);
 
     // Build Summary View left panel
     buildSummaryLeft(data);
     buildByCountryMap(data, map);
+    buildByCountryList(data, alpha2);
 };
 
 
 // Supporting functions of buildContent()
-async function getDataAndMap(dataPath, mapObject) {
-    const [dataResp, ] = await Promise.allSettled([
+async function getData(dataPath, alpha2Path, mapObject) {
+    const [dataResp, alpha2Resp, ] = await Promise.allSettled([
         fetch(dataPath).then(res => res.json()),
+        fetch(alpha2Path).then(res => res.json()),
         new Promise ((resolve) => {mapObject.addEventListener('load', resolve);})
     ]);
-    return [dataResp.value, mapObject.contentDocument]
+    return [dataResp.value, alpha2Resp.value, mapObject.contentDocument]
 };
 
 function buildSummaryLeft(data) {
@@ -68,5 +92,18 @@ function buildByCountryMap(data, map) {
 
         // Highlight country
         countryGroup.classList.add('country-available');
+    });
+};
+
+
+function buildByCountryList(data, alpha2) {
+    const countries = Object.keys(data['country']);
+    const countryList = document.querySelector('#country-list');
+
+    countries.forEach(country => {
+        const listItem = document.createElement('li');
+        listItem.appendChild(document.createTextNode(alpha2[country]));
+        listItem.setAttribute('alpha2', country);
+        countryList.appendChild(listItem);
     });
 };

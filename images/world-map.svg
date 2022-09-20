@@ -2892,7 +2892,7 @@
   </g>
   <g id="AD" class="land">
     <path id="ad-" d="M478.277 119.68c.2-.26.673-.133.836.105-.177.235-.476.358-.759.392-.001-.167-.04-.333-.077-.497"/>
-    <circle id="ad_" fill="#B9B9B9" fill-opacity="0" cx="478.423" cy="119.87" r="2.181"/>
+    <!-- <circle id="ad_" fill="#B9B9B9" fill-opacity="0" cx="478.423" cy="119.87" r="2.181"/> -->
   </g>
 <!--Small and Microstates-->
   <g id="PS" class="land">
