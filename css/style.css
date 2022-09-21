@@ -85,6 +85,7 @@ h1 {
 
 .hidden {
     opacity: 0;
+    visibility: hidden;
 }
 
 .nav-button {
@@ -122,7 +123,6 @@ h1 {
     color: white;
     text-decoration: none;
     font-size: 1.3em;
-    font-weight: lighter;
     white-space: nowrap;
 
     display: flex;
@@ -306,6 +306,31 @@ h1 {
 
 #by-country-view-tooltip-prompt {
     color: #D3D3D3;
+}
+
+#back-to-map-item {
+    margin: auto 10px auto auto;
+    border: 2px solid #6868BE;;
+    border-radius: 10px;
+    padding: 5px;
+}
+
+#back-to-map-link {
+    color: #6868BE;
+    text-decoration: none;
+    font-size: 1.3em;
+    white-space: nowrap;
+    
+    display: flex;
+    gap: 0.5em;
+}
+
+#back-to-map-link:hover  {
+    text-decoration: underline;
+}
+
+#back-to-map-icon {
+    width: 20px;
 }
 
 .footer-hyperlink {

@@ -9,19 +9,25 @@ function navInit() {
     const byCountryViewButton = document.querySelector('#by-country-view-button');
     const summaryView = document.querySelector('#summary-view');
     const byCountryView = document.querySelector('#by-country-view');
+    const byCountryViewDetails = document.querySelector('#by-country-view-details');
+    const backToMapLink = document.querySelector('#back-to-map-link');
 
     summaryViewButton.addEventListener('click', () => {
-        summaryView.classList.remove('hidden')
-        summaryViewButton.classList.add('nav-button-active')
-        byCountryView.classList.add('hidden')
-        byCountryViewButton.classList.remove('nav-button-active')
+        summaryView.classList.remove('hidden');
+        summaryViewButton.classList.add('nav-button-active');
+        byCountryView.classList.add('hidden');
+        byCountryViewButton.classList.remove('nav-button-active');
+        byCountryViewDetails.classList.add('hidden');
     });
 
-    byCountryViewButton.addEventListener('click', () => {
-        byCountryView.classList.remove('hidden')
-        byCountryViewButton.classList.add('nav-button-active')
-        summaryView.classList.add('hidden')
-        summaryViewButton.classList.remove('nav-button-active')
+    Array(byCountryViewButton, backToMapLink).forEach(elem => {
+        elem.addEventListener('click', () => {
+            byCountryView.classList.remove('hidden');
+            byCountryViewButton.classList.add('nav-button-active');
+            byCountryViewDetails.classList.add('hidden');
+            summaryView.classList.add('hidden');
+            summaryViewButton.classList.remove('nav-button-active');
+        });
     });
 };
 
@@ -56,7 +62,8 @@ async function buildContent() {
 
     buildSummaryLeft(data);
     buildByCountryMap(data, map);
-    buildByCountryList(data, alpha2, map);
+    buildByCountryList(data, alpha2);
+    byCountryInit(data, map);
 };
 
 
@@ -99,23 +106,36 @@ function buildByCountryMap(data, map) {
 
 
 // Build By Country View List
-function buildByCountryList(data, alpha2, map) {
+function buildByCountryList(data, alpha2) {
     const countries = Object.keys(data['country']);
     const countryList = document.querySelector('#country-list');
-    const countryTooltip = document.querySelector('#by-country-view-tooltip');
-    const countryTooltipValue = document.querySelector('#by-country-view-tooltip-value');
 
     // Loop through countries with available data
     countries.forEach(country => {
         // Populate By Country View List
         const listItem = document.createElement('li');
         listItem.appendChild(document.createTextNode(alpha2[country]));
+        listItem.setAttribute('id', `${country}-li`);
+        countryList.appendChild(listItem);
+    });
+};
 
+// Enable By Country View interactivity
+function byCountryInit(data, map) {
+    const countries = Object.keys(data['country']);
+    const countryTooltip = document.querySelector('#by-country-view-tooltip');
+    const countryTooltipValue = document.querySelector('#by-country-view-tooltip-value');
+    const byCountryView = document.querySelector('#by-country-view');
+    const byCountryViewDetails = document.querySelector('#by-country-view-details');
+
+    // Loop through countries with available data
+    countries.forEach(country => {
         const countryGroup = map.querySelector(`#${country}`);
         const countryLabel = map.querySelector(`#${country}-label`);
+        const countryListItem = document.querySelector(`#${country}-li`);
 
         // Highlight country and show tooltip when mouseover from map element or list element
-        Array(countryGroup, listItem).forEach(elem => (elem.addEventListener('mouseover', () => {
+        Array(countryGroup, countryListItem).forEach(elem => (elem.addEventListener('mouseover', () => {
             countryGroup.classList.add('country-active');
             countryLabel.classList.add('country-label-available');
             countryTooltipValue.innerHTML = `${Number(data['country'][country]['total']).toLocaleString()} Samples`;
@@ -123,12 +143,38 @@ function buildByCountryList(data, alpha2, map) {
         })));
 
         // Un-highlight country and hide tooltip when mouseout from map element or list element
-        Array(countryGroup, listItem).forEach(elem => (elem.addEventListener('mouseout', () => {
+        Array(countryGroup, countryListItem).forEach(elem => (elem.addEventListener('mouseout', () => {
             countryGroup.classList.remove('country-active');
             countryLabel.classList.remove('country-label-available');
             countryTooltip.classList.add('hidden');
         })));
 
-        countryList.appendChild(listItem);
+        // Enter details view when mouseclick from map element or list element
+        Array(countryGroup, countryListItem).forEach(elem => (elem.addEventListener('click', (e) => {
+            byCountryView.classList.add('hidden');
+            byCountryViewDetails.classList.remove('hidden');
+
+            const countryAlpha2 = getAlpha2(e.target);
+            buildByCountryDetails(countryAlpha2);
+        })));
     });
+};
+
+
+// Extract country alpha2 code from different elements
+function getAlpha2(elem) {
+    if (elem.nodeName == 'LI') {
+        return elem.id.split('-')[0]
+    } else {
+        while (elem.nodeName !== 'g') {
+            elem = elem.parentNode
+        }
+        return elem.id
+    };
+}
+
+
+// Build By Country Details 
+function buildByCountryDetails(countryAlpha2) {
+    // TODO
 };
