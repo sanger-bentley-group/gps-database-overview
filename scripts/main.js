@@ -47,21 +47,20 @@ function filterInit() {
 }
 
 
-// Building content from data.json
+// Build content based on data
 async function buildContent() {
     const mapObject = document.querySelector('#world-map');
 
     // Await for data.json, alpha2.json and map loaded before proceeding
     const [data, alpha2, map] = await getData('data/data.json', 'data/alpha2.json', mapObject);
 
-    // Build Summary View left panel
     buildSummaryLeft(data);
     buildByCountryMap(data, map);
     buildByCountryList(data, alpha2, map);
 };
 
 
-// Supporting functions of buildContent()
+// Get data.json, alpha2.json and ensure map is loaded
 async function getData(dataPath, alpha2Path, mapObject) {
     const [dataResp, alpha2Resp, ] = await Promise.allSettled([
         fetch(dataPath).then(res => res.json()),
@@ -71,6 +70,7 @@ async function getData(dataPath, alpha2Path, mapObject) {
     return [dataResp.value, alpha2Resp.value, mapObject.contentDocument]
 };
 
+// Build Summary View left panel
 function buildSummaryLeft(data) {
     const totalSampleCount = Object.values(data['summary']['country']).reduce((a, b) => a + b);
     document.querySelector('#total-sample-count').innerHTML = Number(totalSampleCount).toLocaleString();
@@ -84,9 +84,12 @@ function buildSummaryLeft(data) {
     document.querySelector('#total-year-range-value').innerHTML = `${totalYearValuesMin} - ${totalYearValuesMax}`;
 };
 
+
+// Build By Country View Map
 function buildByCountryMap(data, map) {
     const countries = Object.keys(data['country']);
 
+    // Loop through countries with available data
     countries.forEach(country => {
         const countryGroup = map.querySelector(`#${country}`);
         // Highlight country
@@ -95,29 +98,35 @@ function buildByCountryMap(data, map) {
 };
 
 
+// Build By Country View List
 function buildByCountryList(data, alpha2, map) {
     const countries = Object.keys(data['country']);
     const countryList = document.querySelector('#country-list');
+    const countryTooltip = document.querySelector('#by-country-view-tooltip');
+    const countryTooltipValue = document.querySelector('#by-country-view-tooltip-value');
 
+    // Loop through countries with available data
     countries.forEach(country => {
+        // Populate By Country View List
         const listItem = document.createElement('li');
         listItem.appendChild(document.createTextNode(alpha2[country]));
 
         const countryGroup = map.querySelector(`#${country}`);
         const countryLabel = map.querySelector(`#${country}-label`);
 
-
+        // Highlight country and show tooltip when mouseover from map element or list element
         Array(countryGroup, listItem).forEach(elem => (elem.addEventListener('mouseover', () => {
-            // Highlight country
             countryGroup.classList.add('country-active');
             countryLabel.classList.add('country-label-available');
+            countryTooltipValue.innerHTML = `${Number(data['country'][country]['total']).toLocaleString()} Samples`;
+            countryTooltip.classList.remove('hidden');
         })));
 
+        // Un-highlight country and hide tooltip when mouseout from map element or list element
         Array(countryGroup, listItem).forEach(elem => (elem.addEventListener('mouseout', () => {
-            const countryGroup = map.querySelector(`#${country}`);
-            // Un-highlight country
             countryGroup.classList.remove('country-active');
             countryLabel.classList.remove('country-label-available');
+            countryTooltip.classList.add('hidden');
         })));
 
         countryList.appendChild(listItem);

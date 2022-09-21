@@ -147,7 +147,7 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    transition: opacity 0.3s ease-in-out;
+    transition: 0.3s;
 }
 
 .summary-view {
@@ -231,6 +231,14 @@ h1 {
     justify-content: center;
 }
 
+.by-country-view-map {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    max-height: 80vh;
+}
+
 .by-country-view-list {
     height: 70vh;
     display: flex;
@@ -272,7 +280,7 @@ h1 {
 
 #world-map {
     width: 80vw;
-    max-height: 80vh;
+    max-width: 1200px;
 }
 
 #country-list-search {
@@ -290,4 +298,27 @@ h1 {
 #country-list {
     max-height: 80vh;
     overflow-y: auto;
+}
+
+#by-country-view-tooltip {
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    width: 200px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1em;
+
+    transition-duration: 0.3s;
+}
+
+#by-country-view-tooltip-value {
+    font-weight: bold;
+    font-size: 1.3em;
+}
+
+#by-country-view-tooltip-prompt {
+    color: #D3D3D3;
 }
