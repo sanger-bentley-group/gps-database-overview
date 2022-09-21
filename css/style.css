@@ -81,7 +81,7 @@ h1 {
 }
 
 
-/* || CLASS SPECIFIC */
+/* || CLASS/ID SPECIFIC */
 
 .hidden {
     opacity: 0;
@@ -111,14 +111,14 @@ h1 {
     font-weight: normal;
 }
 
-.monocle-item {
+#monocle-item {
     margin: auto 10px auto auto;
     border: 2px solid;
     border-radius: 10px;
     padding: 5px;
 }
 
-.monocle-link {
+#monocle-link {
     color: white;
     text-decoration: none;
     font-size: 1.3em;
@@ -129,11 +129,11 @@ h1 {
     gap: 0.5em;
 }
 
-.monocle-link:hover  {
+#monocle-link:hover  {
     text-decoration: underline;
 }
 
-.new-window-icon {
+#monocle-new-window-icon {
     width: 20px;
 }
 
@@ -150,7 +150,7 @@ h1 {
     transition: 0.3s;
 }
 
-.summary-view {
+#summary-view {
     display: flex;
     align-items: center;
     gap: 3em;
@@ -158,13 +158,13 @@ h1 {
     margin: 2em auto;
 }
 
-.summary-view:before {
+#summary-view:before {
     content: "";
     border: 1px solid #6868BE;
     align-self: stretch;
 }
 
-.summary-view-left {
+#summary-view-left {
     flex: 1;
     order: -1;
 
@@ -200,7 +200,7 @@ h1 {
     font-size: 2em;
 }
 
-.summary-view-right {
+#summary-view-right {
     flex: 3;
 
     display:flex;
@@ -225,13 +225,13 @@ h1 {
     font-weight: bold;
 }
 
-.by-country-view {
+#by-country-view {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.by-country-view-map {
+#by-country-view-map {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -239,7 +239,7 @@ h1 {
     max-height: 80vh;
 }
 
-.by-country-view-list {
+#by-country-view-list {
     height: 70vh;
     display: flex;
     flex-direction: column;
@@ -247,36 +247,21 @@ h1 {
     gap: 10px;
 }
 
-.by-country-view-list ul {
+#by-country-view-list ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-.by-country-view-list ul li {
+#by-country-view-list ul li {
     padding: 10px;
     border-radius: 10px;
     transition-duration: 0.3s;
 }
 
-.by-country-view-list ul li:hover {
+#by-country-view-list ul li:hover {
     background-color: #B8B8FF;
 }
-
-.footer-hyperlink {
-    color: white;
-    text-decoration: none;
-    font-size: 1em;
-    margin: 5px;
-    white-space: nowrap;
-}
-
-.footer-hyperlink:hover {
-    text-decoration: underline;
-}
-
-
-/* || ID SPECIFIC */
 
 #world-map {
     width: 80vw;
@@ -321,4 +306,16 @@ h1 {
 
 #by-country-view-tooltip-prompt {
     color: #D3D3D3;
+}
+
+.footer-hyperlink {
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    margin: 5px;
+    white-space: nowrap;
+}
+
+.footer-hyperlink:hover {
+    text-decoration: underline;
 }

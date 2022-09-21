@@ -16,17 +16,17 @@
       <ul>
         <li><button id="summary-view-button" class="nav-button nav-button-active">Summary</button></li>
         <li><button id="by-country-view-button" class="nav-button">By Country</button></li>
-        <li class="monocle-item">
-          <a class="monocle-link" href="https://monocle.sanger.ac.uk/login" target="_blank">
-            <img class="new-window-icon" src="images/new_window_icon.svg" alt="New Window Icon">
+        <li id="monocle-item">
+          <a id="monocle-link" href="https://monocle.sanger.ac.uk/login" target="_blank">
+            <img id="monocle-new-window-icon" src="images/new_window_icon.svg" alt="New Window Icon">
             Retrieve GPS Data via Monocle
           </a>
         </li>
       </ul>
     </nav>
     <article class="content">
-      <section class="content-container summary-view">
-        <div class="summary-view-left">
+      <section class="content-container" id="summary-view">
+        <div id="summary-view-left">
           <div class="summary-view-left-container">
             <img class="summary-view-left-container-left-icon" src="images/dna_icon.svg" alt="DNA Icon">
             <div class="summary-view-left-container-right">
@@ -61,46 +61,49 @@
             </div>
           </div>
         </div>
-        <div class="summary-view-right">
+        <div id="summary-view-right">
           <div class="summary-view-right-container">
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-country-chart">Chart</div>
               <div class="summary-view-right-container-container-title">Country</div>
             </div>
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-vaccine-chart">Chart</div>
               <div class="summary-view-right-container-container-title">Vaccine Period</div>
             </div>
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-manifestation-chart">Chart</div>
               <div class="summary-view-right-container-container-title">Manifestation</div>
             </div>
           </div>
           <div class="summary-view-right-container">
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-year-chart">Chart</div>
               <div class="summary-view-right-container-container-title">Year of Collection</div>
             </div>
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-age-chart">Chart</div>
               <div class="summary-view-right-container-container-title">Age</div>
             </div>
           </div>
       </section>
-      <section class="content-container by-country-view hidden">
-        <div class="by-country-view-map">
+      <section class="content-container hidden" id="by-country-view">
+        <div id="by-country-view-map">
           <object id="world-map" type="image/svg+xml" data="images/world_map.svg"></object>
           <div id="by-country-view-tooltip" class="hidden">
             <div id="by-country-view-tooltip-value">Test Value</div>
             <div id="by-country-view-tooltip-prompt">Click for details</div>
           </div>
         </div>
-        <div class="by-country-view-list">
+        <div id="by-country-view-list">
           <input type="text" id="country-list-search" placeholder="Search for countries.." autocomplete="off">
           <ul id="country-list">
             <!-- To be populated by main.js -->
           </ul>
         </div>
+      </section>
+      <section class="content-container hidden" id="by-country-view-details">
+        Test
       </section>
     </article>
     <footer>

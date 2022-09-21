@@ -7,8 +7,8 @@ buildContent();
 function navInit() {
     const summaryViewButton = document.querySelector('#summary-view-button');
     const byCountryViewButton = document.querySelector('#by-country-view-button');
-    const summaryView = document.querySelector('.summary-view');
-    const byCountryView = document.querySelector('.by-country-view');
+    const summaryView = document.querySelector('#summary-view');
+    const byCountryView = document.querySelector('#by-country-view');
 
     summaryViewButton.addEventListener('click', () => {
         summaryView.classList.remove('hidden')
