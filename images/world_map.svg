@@ -31,7 +31,7 @@
         }
 <!--Additional class for countires with available data-->
         .country-available {
-            fill: #B7BCD8;
+            fill: #C7C7FF;
             transition: 0.3s;
         }
           
