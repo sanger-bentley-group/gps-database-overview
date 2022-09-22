@@ -63,7 +63,7 @@ async function buildContent() {
     buildSummaryLeft(data);
     buildByCountryMap(data, map);
     buildByCountryList(data, alpha2);
-    byCountryInit(data, map);
+    byCountryInit(data, map, alpha2);
 };
 
 
@@ -121,7 +121,7 @@ function buildByCountryList(data, alpha2) {
 };
 
 // Enable By Country View interactivity
-function byCountryInit(data, map) {
+function byCountryInit(data, map, alpha2) {
     const countries = Object.keys(data['country']);
     const countryTooltip = document.querySelector('#by-country-view-tooltip');
     const countryTooltipValue = document.querySelector('#by-country-view-tooltip-value');
@@ -155,7 +155,7 @@ function byCountryInit(data, map) {
             byCountryViewDetails.classList.remove('hidden');
 
             const countryAlpha2 = getAlpha2(e.target);
-            buildByCountryDetails(countryAlpha2);
+            buildByCountryDetails(countryAlpha2, alpha2);
         })));
     });
 };
@@ -175,6 +175,8 @@ function getAlpha2(elem) {
 
 
 // Build By Country Details 
-function buildByCountryDetails(countryAlpha2) {
+function buildByCountryDetails(countryAlpha2, alpha2) {
+    const byCountryViewTitle = document.querySelector('#by-country-view-details-title');
+    byCountryViewTitle.innerHTML = alpha2[countryAlpha2]
     // TODO
 };
