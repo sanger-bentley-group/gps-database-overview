@@ -82,7 +82,7 @@ function buildSummaryLeft(data) {
     const totalSampleCount = Object.values(data['summary']['country']).reduce((a, b) => a + b);
     document.querySelector('#total-sample-count').innerHTML = Number(totalSampleCount).toLocaleString();
 
-    const totalCountryCount = Object.keys(data['summary']['country']).filter(e => e !== 'NaN').length;
+    const totalCountryCount = Object.keys(data['summary']['country']).filter(e => e.length == 2).length;
     document.querySelector('#total-country-count').innerHTML = Number(totalCountryCount).toLocaleString();
 
     const totalYearValues = Object.keys(data['summary']['year_of_collection']).filter(e => e !== 'NaN');
