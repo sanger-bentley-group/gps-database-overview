@@ -34,7 +34,9 @@
                 Samples
               </div>
               <div class="summary-view-left-container-right-bottom">
-                <div id="total-sample-count"></div>
+                <div id="total-sample-count">
+                  <!-- To be populated by main.js -->
+                </div>
               </div>
             </div>
           </div>
@@ -45,7 +47,9 @@
                 Countries
               </div>
               <div class="summary-view-left-container-right-bottom">
-                <div id="total-country-count"></div>
+                <div id="total-country-count">
+                  <!-- To be populated by main.js -->
+                </div>
               </div>
             </div>
           </div>
@@ -56,7 +60,9 @@
                 Year Range
               </div>
               <div class="summary-view-left-container-right-bottom">
-                <div id="total-year-range-value"></div>
+                <div id="total-year-range-value">
+                  <!-- To be populated by main.js -->
+                </div>
               </div>
             </div>
           </div>
@@ -113,7 +119,16 @@
           <!-- To be populated by main.js -->
         </div>
         <div id="by-country-view-details-content">
-          <!-- TODO -->
+          <div id="by-country-view-details-content-button-group">
+            <button id="by-age-button" class="country-button country-button-active">By Age</button>
+            <button id="by-manifestation-button" class="country-button">By Manifestation</button>
+          </div>
+          <div id="by-country-view-details-content-chart">
+            Chart
+          </div>
+          <div id="by-country-view-details-content-tooltip">
+            <div id="by-country-view-details-content-tooltip-title">Placeholder</div>
+          </div>
         </div>
       </section>
     </article>
