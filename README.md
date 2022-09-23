@@ -17,6 +17,10 @@ Tested on:
 ## Credits
 This project uses Open Source components. You can find the source code of their open source projects along with license information below. I acknowledge and am grateful to these developers for their contributions to open source.
 
+[**D3.js**](https://d3js.org/)
+- Copyright 2010-2022 Mike Bostock
+- License (ISC): https://github.com/d3/d3/blob/main/LICENSE
+
 [**SVG World Map JS**](https://github.com/raphaellepuschitz/SVG-World-Map)
 - Copyright (c) Raphael Lepuschitz
 - License (MIT): https://github.com/raphaellepuschitz/SVG-World-Map/blob/master/LICENSE.md

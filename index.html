@@ -70,15 +70,21 @@
         <div id="summary-view-right">
           <div class="summary-view-right-container">
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart" id="summary-view-country-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-country-chart">
+                <!-- To be populated by main.js -->
+              </div>
               <div class="summary-view-right-container-container-title">Country</div>
             </div>
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart" id="summary-view-vaccine-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-vaccine_period-chart">
+                <!-- To be populated by main.js -->
+              </div>
               <div class="summary-view-right-container-container-title">Vaccine Period</div>
             </div>
             <div class="summary-view-right-container-container">
-              <div class="summary-view-right-container-container-chart" id="summary-view-manifestation-chart">Chart</div>
+              <div class="summary-view-right-container-container-chart" id="summary-view-manifestation-chart">
+                <!-- To be populated by main.js -->
+              </div>
               <div class="summary-view-right-container-container-title">Manifestation</div>
             </div>
           </div>
@@ -142,6 +148,8 @@
     <footer>
       <a class="footer-hyperlink" href="https://www.pneumogen.net/gps/" target="_blank">The Global Pneumococcal Sequencing Project</a>
     </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.6.1/d3.min.js" integrity="sha512-MefNfAGJ/pEy89xLOFs3V6pYPs6AmUhXJrRlydI/9wZuGrqxmrdQ80zKHUcyadAcpH67teDZcBeS6oMJLPtTqw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="scripts/charts.js"></script>
     <script src="scripts/main.js"></script>
   </body>
 </html>

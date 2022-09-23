@@ -218,6 +218,7 @@ a {
 .summary-view-right-container {
     display: flex;
     justify-content: space-around;
+    gap: 2em;
 }
 
 .summary-view-right-container-container {
@@ -227,9 +228,14 @@ a {
     gap: 1em;
 }
 
+.summary-view-right-container-container-chart {
+    width: 15vw;
+}
+
 .summary-view-right-container-container-title {
     font-size: 1.3em;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 #by-country-view {
