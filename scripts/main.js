@@ -132,7 +132,8 @@ function buildByCountryList(data, alpha2) {
 // Enable By Country View interactivity
 function byCountryInit(data, map, alpha2) {
     const countries = Object.keys(data.country);
-    const countryTooltip = document.querySelector("#by-country-view-tooltip");
+    const countryTooltipInstruction = document.querySelector("#by-country-view-tooltip-instruction");
+    const countryTooltipDisplay = document.querySelector("#by-country-view-tooltip-display");
     const countryTooltipValue = document.querySelector("#by-country-view-tooltip-value");
     const byCountryView = document.querySelector("#by-country-view");
     const byCountryViewDetails = document.querySelector("#by-country-view-details");
@@ -149,7 +150,8 @@ function byCountryInit(data, map, alpha2) {
                 countryGroup.classList.add("country-active");
                 countryLabel.classList.add("country-label-available");
                 countryTooltipValue.innerHTML = `${Number(data.country[country].total).toLocaleString()} Samples`;
-                countryTooltip.classList.remove("hidden");
+                countryTooltipInstruction.classList.add("hidden");
+                countryTooltipDisplay.classList.remove("hidden");
             });
         });
 
@@ -158,7 +160,8 @@ function byCountryInit(data, map, alpha2) {
             elem.addEventListener("mouseout", function () {
                 countryGroup.classList.remove("country-active");
                 countryLabel.classList.remove("country-label-available");
-                countryTooltip.classList.add("hidden");
+                countryTooltipInstruction.classList.remove("hidden");
+                countryTooltipDisplay.classList.add("hidden");
             });
         });
 

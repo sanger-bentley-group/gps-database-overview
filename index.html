@@ -96,13 +96,20 @@
       <section class="content-container hidden" id="by-country-view">
         <div id="by-country-view-map">
           <object id="world-map" type="image/svg+xml" data="images/world_map.svg"></object>
-          <div id="by-country-view-tooltip" class="hidden">
-            <div id="by-country-view-tooltip-value">Test Value</div>
-            <div id="by-country-view-tooltip-prompt">Click for details</div>
+          <div id="by-country-view-tooltip">
+            <div id="by-country-view-tooltip-instruction">
+              Select from Map or List
+            </div>
+            <div id="by-country-view-tooltip-display" class="hidden">
+              <div id="by-country-view-tooltip-value">
+                <!-- To be populated by main.js -->
+              </div>
+              <div id="by-country-view-tooltip-prompt">Click for details</div>
+            </div>
           </div>
         </div>
         <div id="by-country-view-list">
-          <input type="text" id="country-list-search" placeholder="Search for countries.." autocomplete="off">
+          <input type="text" id="country-list-search" placeholder="Search..." autocomplete="off">
           <ul id="country-list">
             <!-- To be populated by main.js -->
           </ul>
