@@ -96,9 +96,8 @@ function buildSummaryLeft(data, alpha2) {
 
 // Build Summary View right panel
 function buildSummaryRight(data) {
-    ["country", "vaccine_period", "manifestation"].forEach(group => buildDonutChart(data.summary[group], group));
-    
-    // TODO
+    ["country", "vaccine_period", "manifestation"].forEach((group) => buildDonutChart(data.summary[group], group));
+    ["year_of_collection", "age"].forEach((group) => buildBarChart(data.summary[group], group));
 }
 
 

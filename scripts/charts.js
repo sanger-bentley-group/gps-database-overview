@@ -25,5 +25,9 @@ function buildDonutChart(data, group) {
         .attr("stroke", "white")
         .style("stroke-width", "1px")
         .attr("data-country", (d) => d.data[0])
-        .attr("data-count", (d) => d.data[1])
+        .attr("data-count", (d) => d.data[1]);
+}
+
+function buildBarChart(data, group) {
+// TODO
 }
