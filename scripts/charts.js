@@ -28,6 +28,51 @@ function buildDonutChart(data, group) {
         .attr("data-count", (d) => d.data[1]);
 }
 
+
 function buildBarChart(data, group) {
-// TODO
+    const target = document.querySelector(`#summary-view-${group}-chart`);
+
+    const margin = {top: 10, right: 10, bottom: 40, left: 40},
+    width = 800 - margin.left - margin.right,
+    height = 300 - margin.top - margin.bottom;
+
+    const dataArr = Object.entries(data).map(([key, value]) => ({
+        key: isNaN(key) ? 'Unknown' : key,
+        value: value
+    }));
+
+    const svg = d3.select(target)
+    .append("svg")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+    const x = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(dataArr.map((d) => d.key))
+        .padding(0.2);
+    
+    svg.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(x))
+        .selectAll("text")
+          .attr("transform", "translate(-10,0)rotate(-45)")
+          .style("text-anchor", "end");
+      
+      // Add Y axis
+      const y = d3.scaleLinear()
+        .domain([0, Math.ceil(Math.max(...Object.values(data))/1000) * 1000])
+        .range([ height, 0]);
+      svg.append("g")
+        .call(d3.axisLeft(y));
+      
+      // Bars
+      svg.selectAll("mybar")
+        .data(dataArr)
+        .join("rect")
+          .attr("x", d => x(d.key))
+          .attr("y", d => y(d.value))
+          .attr("width", x.bandwidth())
+          .attr("height", d => height - y(d.value))
+          .attr("fill", "#633AB5")
 }

@@ -228,8 +228,14 @@ a {
     gap: 1em;
 }
 
-.summary-view-right-container-container-chart {
+.summary-view-right-container-container-top-chart {
     width: 15vw;
+    max-width: 250px;
+}
+
+.summary-view-right-container-container-bottom-chart {
+    width: 30vw;
+    max-width: 800px;
 }
 
 .summary-view-right-container-container-title {
