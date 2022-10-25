@@ -36,10 +36,21 @@ function buildBarChart(data, group) {
     width = 800 - margin.left - margin.right,
     height = 300 - margin.top - margin.bottom;
 
-    const dataArr = Object.entries(data).map(([key, value]) => ({
-        key: isNaN(key) ? 'Unknown' : key,
-        value: value
-    }));
+    let dataArr = [];
+
+    const dataNums = Object.keys(data).filter((x) => !isNaN(x));
+    const dataNumsMin = Math.min(...dataNums);
+    const dataNumsMax = Math.max(...dataNums);
+
+    if (Object.keys(data).filter((x) => isNaN(x)).length) {
+        dataArr.push({key: 'Unknown', value: data['NaN']});
+    }
+    for (let i = dataNumsMin; i <= dataNumsMax; i++) {
+        dataArr.push({
+            key: i, 
+            value: data[i] ?? 0
+        });
+    }
 
     const svg = d3.select(target)
     .append("svg")
@@ -67,7 +78,7 @@ function buildBarChart(data, group) {
         .call(d3.axisLeft(y));
       
       // Bars
-      svg.selectAll("mybar")
+      svg.selectAll("bar")
         .data(dataArr)
         .join("rect")
           .attr("x", d => x(d.key))
