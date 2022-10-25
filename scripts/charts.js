@@ -52,27 +52,19 @@ function buildBarChart(data, group) {
             dataArr.push({ key: i, value: data[i] ?? 0 });
         }
     } else {
-        let accum = 0;
-        for (let i = 0; i <= dataNumsMax; i++) {
-            if (i <= 5) {
-                dataArr.push({ key: i, value: data[i] ?? 0 });
-            } else if (6 <= i && i <= 10) {
-                accum += data[i] ?? 0;
-                if (i === 10 | i === dataNumsMax) {
-                    dataArr.push({ key: `6-${Math.min(10, dataNumsMax)}`, value: accum });
-                    accum = 0;
-                }
+        let ageBins = [0, 1, 2, 3, 4, 5, [6, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, dataNumsMax]]
+        ageBins.forEach(bin => {
+            if (!Array.isArray(bin)) {
+                dataArr.push({ key: bin, value: data[bin] ?? 0 });
             } else {
-                accum += data[i] ?? 0;
-                if (i % 10 === 0) {
-                    dataArr.push({ key: `${i - 9}-${i}`, value: accum });
-                    accum = 0;
-                } else if (i === dataNumsMax) {
-                    dataArr.push({ key: `${Math.floor(i / 10) * 10 }-${i}`, value: accum });
-                    accum = 0;
+                let accum = 0;
+                for (let i = bin[0]; i <= bin[1]; i++){
+                    accum += data[i] ?? 0; 
                 }
+                const keyName = bin[1] !== dataNumsMax ? `${bin[0]}-${bin[1]}` : `>${bin[0]-1}`;
+                dataArr.push({ key: keyName, value: accum });
             }
-        }
+        });
     }
 
     const svgContainer = d3.select(target);
