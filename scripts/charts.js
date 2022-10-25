@@ -15,14 +15,14 @@ function buildDonutChart(data, group) {
     const color = d3.scaleOrdinal(d3.schemeCategory10);
     const arcs = d3.pie().value((d) => d[1]);
 
-    chart.selectAll('path')
+    chart.selectAll("path")
     .data(arcs(Object.entries(data)))
-    .join('path')
-        .attr('d', d3.arc()
+    .join("path")
+        .attr("d", d3.arc()
             .innerRadius(radius * 0.7)
             .outerRadius(radius)
         )
-        .attr('fill', (d) => color(d.data[0]))
+        .attr("fill", (d) => color(d.data[0]))
         .attr("stroke", "white")
         .style("stroke-width", "1px")
         .attr("data-country", (d) => d.data[0])
@@ -44,7 +44,7 @@ function buildBarChart(data, group) {
     const dataNumsMax = Math.max(...dataNums);
 
     if (Object.keys(data).filter((x) => isNaN(x)).length) {
-        dataArr.push({ key: 'Unknown', value: data['NaN'] });
+        dataArr.push({ key: "Unknown", value: data["NaN"] });
     }
 
     if (group !== "age") {
