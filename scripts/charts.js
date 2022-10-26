@@ -12,21 +12,44 @@ function buildDonutChart(data, group) {
     const chart = svg.append("g")
         .attr("transform", `translate(${radius},${radius})`);
 
+    
+    let dataArr = [];
+
+    for (key in data) {
+        // Comment out below to include unknown data
+        if (key === "NaN") { continue; }
+        dataArr.push({ key: key, value: data[key] });
+    }
+
     const color = d3.scaleOrdinal(d3.schemeCategory10);
-    const arcs = d3.pie().value((d) => d[1]);
+    const arcs = d3.pie().value((d) => d.value);
 
     chart.selectAll("path")
-    .data(arcs(Object.entries(data)))
+    .data(arcs(dataArr))
     .join("path")
         .attr("d", d3.arc()
             .innerRadius(radius * 0.7)
             .outerRadius(radius)
         )
-        .attr("fill", (d) => color(d.data[0]))
+        .attr("fill", (d) => color(d.data.key))
         .attr("stroke", "white")
         .style("stroke-width", "1px")
-        .attr("data-country", (d) => d.data[0])
-        .attr("data-count", (d) => d.data[1]);
+        .attr("data-country", (d) => d.data.key)
+        .attr("data-count", (d) => d.value);
+    
+    chart.append("text")
+        .text("KEY")
+            .attr("transform", `translate(0 -${radius / 5})`)
+            .style("text-anchor", "middle")
+            .style("font-size", "36px")
+            .attr("class", `key-${group}`);
+    
+    chart.append("text")
+        .text("Value")
+            .attr("transform", `translate(0 ${radius / 5})`)
+            .style("text-anchor", "middle")
+            .style("font-size", "48px")
+            .attr("class", `value-${group}`);
 }
 
 
@@ -160,7 +183,7 @@ function buildBarChart(data, group) {
     
     // Add selection zones for the whole height. Add interactivity and animations to the zones. 
     const selectTransitTime = 100;
-    
+
     chart.selectAll("selectionZone")
     .data(dataArr)
     .join("rect")
