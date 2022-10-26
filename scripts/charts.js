@@ -172,13 +172,13 @@ function buildBarChart(data, group) {
         .on("mouseenter", function (_ignore, d) {
             chart.selectAll(`.bar-${group},.label-${group}`)
                 .filter((e) => e.key != d.key)
-                    .transition("dimBarLabel")
+                    .transition("barLabel")
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
                         .attr("opacity", 0.2);
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.text-${group}`)
-                .transition("showText")
+                .transition("text")
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
                     .attr("opacity", 1)
@@ -187,19 +187,19 @@ function buildBarChart(data, group) {
         .on("mouseleave", function (_ignore, d) {
             chart.selectAll(`.bar-${group},.label-${group}`)
                 .filter((e) => e.key != d.key)
-                .transition("resetBarLabel")
+                .transition("barLabel")
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
                     .attr("opacity", 1);
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.text-${group}`)
-                .transition("resetText")
+                .transition("text")
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
                     .style("font-size", "16px");
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.value-${group}`)
-                .transition("hideValue")
+                .transition("value")
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
                     .attr("opacity", 0)
