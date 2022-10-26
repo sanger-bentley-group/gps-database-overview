@@ -118,7 +118,27 @@ function buildBarChart(data, group) {
         .attr("height", d => height - yScale(d.value))
         .attr("fill", "#633AB5")
         .attr("class", (d) => `bar-${group} ${group}-${d.key}`)
-        .attr("id", (d) => `bar-${group}-${d.key}`)
+        .attr("id", (d) => `bar-${group}-${d.key}`);
+
+    chart.selectAll("value")
+    .data(dataArr)
+    .join("text")
+        .text((d) => d.value)
+        .style("font-size", "24px")
+        .style("text-anchor", "middle")
+        .attr("x", (d) => xScale(d.key) + xScale.bandwidth() / 2)
+        .attr("y", (d) => yScale(d.value) - 10)
+        .attr("opacity", 0)
+        .attr("class", (d) => `text-${group} ${group}-${d.key}`);
+
+    chart.selectAll("selectionZone")
+    .data(dataArr)
+    .join("rect")
+        .attr("x", (d) => xScale(d.key))
+        .attr("y", 0)
+        .attr("width", xScale.bandwidth() + 10)
+        .attr("height", height + margin.bottom)
+        .attr("opacity", 0)
         .on("mouseenter", function (_ignore, d) {
             chart.selectAll(`.bar-${group}`)
                 .attr("opacity", 0.2);
@@ -138,15 +158,4 @@ function buildBarChart(data, group) {
             chart.selectAll(`.${group}-${d.key}`)
                 .style("font-size", "16px");
         });
-
-    chart.selectAll("value")
-    .data(dataArr)
-    .join("text")
-        .text((d) => d.value)
-        .style("font-size", "24px")
-        .style("text-anchor", "middle")
-        .attr("x", (d) => xScale(d.key) + xScale.bandwidth() / 2)
-        .attr("y", (d) => yScale(d.value) - 10)
-        .attr("opacity", 0)
-        .attr("class", (d) => `text-${group} ${group}-${d.key}`);
 }
