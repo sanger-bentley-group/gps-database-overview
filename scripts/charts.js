@@ -126,17 +126,25 @@ function buildBarChart(data, group) {
     // Remove domain lines 
     chart.selectAll(".domain").remove();
     
-    // Add bars
+    // Add bars, zero height to allow animation
     chart.selectAll("bar")
     .data(dataArr)
     .join("rect")
         .attr("x", (d) => xScale(d.key))
-        .attr("y", (d) => yScale(d.value))
+        .attr("y", yScale(0))
         .attr("width", xScale.bandwidth())
-        .attr("height", d => height - yScale(d.value))
+        .attr("height", height - yScale(0))
         .attr("fill", "#633AB5")
         .attr("opacity", 1)
         .attr("class", (d) => `bar-${group} ${group}-${d.key}`);
+
+    // Bar animation to target height
+    chart.selectAll(`.bar-${group}`)
+        .transition()
+        .duration(4000/dataArr.length)
+        .attr("y", function(d) { return yScale(d.value); })
+        .attr("height", function(d) { return height - yScale(d.value); })
+        .delay((_ignore,i) => i*1000/dataArr.length)
 
     // Add hidden values at the top of bars
     chart.selectAll("value")
@@ -174,7 +182,9 @@ function buildBarChart(data, group) {
                     .attr("opacity", 1);
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.text-${group}`)
-                    .attr("opacity", 0)
                     .style("font-size", "16px");
+            chart.selectAll(`.${group}-${d.key}`)
+                .filter(`.value-${group}`)
+                    .attr("opacity", 0)
         });
 }
