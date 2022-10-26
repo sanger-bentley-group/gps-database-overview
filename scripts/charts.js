@@ -144,7 +144,7 @@ function buildBarChart(data, group) {
         .duration(300)
         .attr("y", function(d) { return yScale(d.value); })
         .attr("height", function(d) { return height - yScale(d.value); })
-        .delay((_ignore,i) => i*500/dataArr.length)
+        .delay((_ignore,i) => i*1000/dataArr.length)
 
     // Add hidden values at the top of bars
     chart.selectAll("value")
