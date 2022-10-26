@@ -82,15 +82,18 @@ async function getData(dataPath, alpha2Path, mapObject) {
 // Build Summary View left panel
 function buildSummaryLeft(data, alpha2) {
     const totalSampleCount = Object.values(data.summary.country).reduce((a, b) => a + b);
-    document.querySelector("#total-sample-count").innerHTML = Number(totalSampleCount).toLocaleString();
+    document.querySelector("#total-sample-count").innerHTML = totalSampleCount;
 
     const totalCountryCount = Object.keys(data.summary.country).filter((e) => alpha2.hasOwnProperty(e)).length;
-    document.querySelector("#total-country-count").innerHTML = Number(totalCountryCount).toLocaleString();
+    document.querySelector("#total-country-count").innerHTML = totalCountryCount;
 
     const totalYearValues = Object.keys(data.summary.year_of_collection).filter((e) => e !== "NaN");
     const totalYearValuesMin = Math.min(...totalYearValues);
     const totalYearValuesMax = Math.max(...totalYearValues);
-    document.querySelector("#total-year-range-value").innerHTML = `${totalYearValuesMin} - ${totalYearValuesMax}`;
+    document.querySelector("#total-year-low-value").innerHTML = `${totalYearValuesMin}`;
+    document.querySelector("#total-year-high-value").innerHTML = `${totalYearValuesMax}`;
+
+    document.querySelectorAll('.countup').forEach(animateCountUp);
 }
 
 
@@ -177,6 +180,35 @@ function byCountryInit(data, map, alpha2) {
             });
         });
     });
+}
+
+
+// Count up animation
+function animateCountUp(elem) {
+    // frame duration = 1000ms / fps
+    const frameDuration = 1000 / 60;
+    // total frames = total duration / frame duration
+    const frames = Math.round(1000 / frameDuration);
+    const easeOut = t => t * (2 - t);
+
+    let frame = 0;
+    const countTo = parseInt(elem.innerHTML);
+    
+    const counter = setInterval( function() {
+        frame++;
+        let currentCount = Math.round(countTo * easeOut(frame / frames));
+
+        // Update value to localeString format if element has .localeString class
+        if (elem.classList.contains('localeString')) {
+            currentCount = currentCount.toLocaleString();
+        }
+
+        elem.innerHTML = currentCount;
+
+        if (frame === frames) {
+            clearInterval(counter);
+        }
+    }, frameDuration);
 }
 
 
