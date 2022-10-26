@@ -1,10 +1,10 @@
 function buildDonutChart(data, group) {
-    const target = document.querySelector(`#summary-view-${group}-chart`);
+    const container = document.querySelector(`#summary-view-${group}-chart`);
 
     const diameter = 500;
     const radius = diameter / 2;
 
-    const svgContainer = d3.select(target);
+    const svgContainer = d3.select(container);
     
     const svg = svgContainer.append("svg")
         .attr("viewBox", `0 0 ${diameter} ${diameter}`)
@@ -30,24 +30,30 @@ function buildDonutChart(data, group) {
 }
 
 
+// Build bar charts in Summary View
 function buildBarChart(data, group) {
-    const target = document.querySelector(`#summary-view-${group}-chart`);
+    const container = document.querySelector(`#summary-view-${group}-chart`);
 
+    // Set dimension of the chart
     const margin = {top: 30, right: 10, bottom: 70, left: 60},
     width = 800 - margin.left - margin.right,
-    height = 300 - margin.top - margin.bottom;
+    height = 400 - margin.top - margin.bottom;
 
-    let dataArr = [];
-
+    // Get known data and range
     const dataNums = Object.keys(data).filter((x) => !isNaN(x));
     const dataNumsMin = Math.min(...dataNums);
     const dataNumsMax = Math.max(...dataNums);
+
+    // Except age, build bars for the whole range and fill in missing ones
+    // For age, build bars according to ageBins
+    let dataArr = [];
 
     if (group !== "age") {
         for (let i = dataNumsMin; i <= dataNumsMax; i++) {
             dataArr.push({ key: i, value: data[i] ?? 0 });
         }
     } else {
+        // In ageBins, Int for single value, 2-element array for range. Last item must be an array with dataNumsMax as the second element
         let ageBins = [0, 1, 2, 3, 4, 5, [6, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, dataNumsMax]]
         ageBins.forEach(bin => {
             if (!Array.isArray(bin)) {
@@ -57,58 +63,70 @@ function buildBarChart(data, group) {
                 for (let i = bin[0]; i <= bin[1]; i++){
                     accum += data[i] ?? 0; 
                 }
-                const keyName = bin[1] !== dataNumsMax ? `${bin[0]}-${bin[1]}` : `lt${bin[0]-1}`;
+                // "gt" is used instead of ">" to avoid class/id name issues
+                const keyName = bin[1] !== dataNumsMax ? `${bin[0]}-${bin[1]}` : `gt${bin[0]-1}`;
                 dataArr.push({ key: keyName, value: accum });
             }
         });
     }
 
-    // Uncomment to show unknown data
+    // Uncomment below to show unknown data
     // if (Object.keys(data).filter((x) => isNaN(x)).length) {
     //     dataArr.push({ key: "Unknown", value: data["NaN"] });
     // }
 
-    const svgContainer = d3.select(target);
 
+    // Select svg container
+    const svgContainer = d3.select(container);
+
+    // Add svg into container
     const svg = svgContainer.append("svg")
         .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
     
+    // Add chart area in svg
     const chart = svg.append("g")
         .attr("transform", `translate(${margin.left},${margin.top})`);
     
+    // Setup X-axis band scale
     const xScale = d3.scaleBand()
         .range([ 0, width ])
         .domain(dataArr.map((d) => d.key))
-        .padding(0.2);
+        .padding(0.1);
     
+    // Setup Y-axis linear scale, the upper limit is round up to closest 1000s
     const yScale = d3.scaleLinear()
         .domain([0, Math.ceil(Math.max(...Object.values(data))/1000) * 1000])
         .range([ height, 0]);
 
+    // Add X-axis and labels, replace "gt" to ">" in labels
     chart.append("g")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale).tickFormat((d) => d.toString().replace("lt", ">")))
+        .call(d3.axisBottom(xScale).tickFormat((d) => d.toString().replace("gt", ">")))
         .selectAll("text")
             .style("font-size", "16px")
             .style("text-anchor", "end")
             .attr("transform", "translate(-10,0)rotate(-45)")
-            .attr("class", `label-${group}`);
+            .attr("class", `label-${group} text-${group}`);
 
+    // Add data-specific class for X-axis labels, replace "&gt;" to "gt" in class name
     document.querySelectorAll(`.label-${group}`).forEach(function(textNode) {
-        textNode.classList.add(`${group}-${textNode.innerHTML.replace("&gt;", "lt")}`);
-        textNode.setAttribute("id", `label-${group}-${textNode.innerHTML.replace("&gt;", "lt")}`);
+        textNode.classList.add(`${group}-${textNode.innerHTML.replace("&gt;", "gt")}`);
     });
 
+    // Add Y-axis grid lines and labels
     chart.append("g")
         .call(d3.axisLeft(yScale).ticks(5).tickSize(-width))
         .selectAll("text")
             .style("font-size", "16px");
 
+    // Change Y-axis grid line opacity
     chart.selectAll(".tick line")
     .attr("opacity", 0.5);
 
+    // Remove domain lines 
     chart.selectAll(".domain").remove();
     
+    // Add bars
     chart.selectAll("bar")
     .data(dataArr)
     .join("rect")
@@ -117,20 +135,22 @@ function buildBarChart(data, group) {
         .attr("width", xScale.bandwidth())
         .attr("height", d => height - yScale(d.value))
         .attr("fill", "#633AB5")
-        .attr("class", (d) => `bar-${group} ${group}-${d.key}`)
-        .attr("id", (d) => `bar-${group}-${d.key}`);
+        .attr("opacity", 1)
+        .attr("class", (d) => `bar-${group} ${group}-${d.key}`);
 
+    // Add hidden values at the top of bars
     chart.selectAll("value")
     .data(dataArr)
     .join("text")
         .text((d) => d.value)
-        .style("font-size", "24px")
+        .style("font-size", "16px")
         .style("text-anchor", "middle")
         .attr("x", (d) => xScale(d.key) + xScale.bandwidth() / 2)
-        .attr("y", (d) => yScale(d.value) - 10)
+        .attr("y", (d) => yScale(d.value) - 15)
         .attr("opacity", 0)
-        .attr("class", (d) => `text-${group} ${group}-${d.key}`);
-
+        .attr("class", (d) => `value-${group} text-${group} ${group}-${d.key}`);
+    
+    // Add selection zones for the whole height. Add interactivity and animations to the zones. 
     chart.selectAll("selectionZone")
     .data(dataArr)
     .join("rect")
@@ -140,22 +160,21 @@ function buildBarChart(data, group) {
         .attr("height", height + margin.bottom)
         .attr("opacity", 0)
         .on("mouseenter", function (_ignore, d) {
-            chart.selectAll(`.bar-${group}`)
-                .attr("opacity", 0.2);
-            chart.selectAll(`.label-${group}`)
-                .attr("opacity", 0.2);
+            chart.selectAll(`.bar-${group},.label-${group}`)
+                .filter((e) => e.key != d.key)
+                    .attr("opacity", 0.2);
             chart.selectAll(`.${group}-${d.key}`)
-                .attr("opacity", 1)
-                .style("font-size", "24px");
+                .filter(`.text-${group}`)
+                    .attr("opacity", 1)
+                    .style("font-size", "24px");
         })
         .on("mouseleave", function (_ignore, d) {
-            chart.selectAll(`.bar-${group}`)
-                .attr("opacity", 1);
-            chart.selectAll(`.label-${group}`)
-                .attr("opacity", 1);
-            chart.selectAll(`.text-${group}`)
-                .attr("opacity", 0);
+            chart.selectAll(`.bar-${group},.label-${group}`)
+                .filter((e) => e.key != d.key)
+                    .attr("opacity", 1);
             chart.selectAll(`.${group}-${d.key}`)
-                .style("font-size", "16px");
+                .filter(`.text-${group}`)
+                    .attr("opacity", 0)
+                    .style("font-size", "16px");
         });
 }
