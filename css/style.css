@@ -87,8 +87,8 @@ a {
  }
 
 
-path, rect {
-    transition: all 0.2s;
+path, rect, text {
+    transition: all 0.5s;
 }
 
 

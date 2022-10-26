@@ -89,9 +89,15 @@ function buildBarChart(data, group) {
         .attr("transform", `translate(0, ${height})`)
         .call(d3.axisBottom(xScale).tickFormat((d) => d.toString().replace("lt", ">")))
         .selectAll("text")
-            .attr("transform", "translate(-10,0)rotate(-45)")
             .style("font-size", "16px")
-            .style("text-anchor", "end");
+            .style("text-anchor", "end")
+            .attr("transform", "translate(-10,0)rotate(-45)")
+            .attr("class", `label-${group}`);
+
+    document.querySelectorAll(`.label-${group}`).forEach(function(textNode) {
+        textNode.classList.add(`${group}-${textNode.innerHTML.replace("&gt;", "lt")}`);
+        textNode.setAttribute("id", `label-${group}-${textNode.innerHTML.replace("&gt;", "lt")}`);
+    });
 
     chart.append("g")
         .call(d3.axisLeft(yScale).ticks(5).tickSize(-width))
@@ -114,26 +120,33 @@ function buildBarChart(data, group) {
         .attr("class", (d) => `bar-${group} ${group}-${d.key}`)
         .attr("id", (d) => `bar-${group}-${d.key}`)
         .on("mouseenter", function (_ignore, d) {
-            d3.selectAll(`.bar-${group}`)
+            chart.selectAll(`.bar-${group}`)
                 .attr("opacity", 0.2);
-            d3.selectAll(`.${group}-${d.key}`)
-                .attr("opacity", 1);
+            chart.selectAll(`.label-${group}`)
+                .attr("opacity", 0.2);
+            chart.selectAll(`.${group}-${d.key}`)
+                .attr("opacity", 1)
+                .style("font-size", "24px");
         })
-        .on("mouseleave", function () {
-            d3.selectAll(`.bar-${group}`)
+        .on("mouseleave", function (_ignore, d) {
+            chart.selectAll(`.bar-${group}`)
                 .attr("opacity", 1);
-            d3.selectAll(`.text-${group}`)
+            chart.selectAll(`.label-${group}`)
+                .attr("opacity", 1);
+            chart.selectAll(`.text-${group}`)
                 .attr("opacity", 0);
+            chart.selectAll(`.${group}-${d.key}`)
+                .style("font-size", "16px");
         });
 
-    chart.selectAll("bar")
+    chart.selectAll("value")
     .data(dataArr)
     .join("text")
         .text((d) => d.value)
-        .attr("x", (d) => xScale(d.key) + xScale.bandwidth() / 2)
-        .attr("y", (d) => yScale(d.value) - 10)
         .style("font-size", "24px")
         .style("text-anchor", "middle")
-        .attr("class", (d) => `text-${group} ${group}-${d.key}`)
-        .attr("opacity", 0);
+        .attr("x", (d) => xScale(d.key) + xScale.bandwidth() / 2)
+        .attr("y", (d) => yScale(d.value) - 10)
+        .attr("opacity", 0)
+        .attr("class", (d) => `text-${group} ${group}-${d.key}`);
 }
