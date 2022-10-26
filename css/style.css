@@ -87,11 +87,6 @@ a {
  }
 
 
-path, rect, text {
-    transition: all 0.2s;
-}
-
-
 /* || CLASS/ID SPECIFIC */
 
 .hidden {

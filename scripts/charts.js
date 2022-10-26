@@ -140,11 +140,11 @@ function buildBarChart(data, group) {
 
     // Bar animation to target height
     chart.selectAll(`.bar-${group}`)
-        .transition()
-        .duration(4000/dataArr.length)
+        .transition("growBar")
+        .duration(300)
         .attr("y", function(d) { return yScale(d.value); })
         .attr("height", function(d) { return height - yScale(d.value); })
-        .delay((_ignore,i) => i*1000/dataArr.length)
+        .delay((_ignore,i) => i*500/dataArr.length)
 
     // Add hidden values at the top of bars
     chart.selectAll("value")
@@ -159,6 +159,8 @@ function buildBarChart(data, group) {
         .attr("class", (d) => `value-${group} text-${group} ${group}-${d.key}`);
     
     // Add selection zones for the whole height. Add interactivity and animations to the zones. 
+    const selectTransitTime = 100;
+    
     chart.selectAll("selectionZone")
     .data(dataArr)
     .join("rect")
@@ -170,21 +172,36 @@ function buildBarChart(data, group) {
         .on("mouseenter", function (_ignore, d) {
             chart.selectAll(`.bar-${group},.label-${group}`)
                 .filter((e) => e.key != d.key)
-                    .attr("opacity", 0.2);
+                    .transition("dimBarLabel")
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0.2);
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.text-${group}`)
+                .transition("showText")
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
                     .attr("opacity", 1)
                     .style("font-size", "24px");
         })
         .on("mouseleave", function (_ignore, d) {
             chart.selectAll(`.bar-${group},.label-${group}`)
                 .filter((e) => e.key != d.key)
+                .transition("resetBarLabel")
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
                     .attr("opacity", 1);
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.text-${group}`)
+                .transition("resetText")
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
                     .style("font-size", "16px");
             chart.selectAll(`.${group}-${d.key}`)
                 .filter(`.value-${group}`)
+                .transition("hideValue")
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
                     .attr("opacity", 0)
         });
 }
