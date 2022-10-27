@@ -60,7 +60,7 @@ async function buildContent() {
     // Await for data.json, alpha2.json and map loaded before proceeding
     const [data, alpha2, map] = await getData("data/data.json", "data/alpha2.json", mapObject);
 
-    buildSummaryLeft(data, alpha2);
+    buildSummaryLeft(data);
     buildSummaryRight(data);
     buildByCountryMap(data, map);
     buildByCountryList(data, alpha2);
@@ -80,7 +80,7 @@ async function getData(dataPath, alpha2Path, mapObject) {
 
 
 // Build Summary View left panel
-function buildSummaryLeft(data, alpha2) {
+function buildSummaryLeft(data) {
     const totalSampleCount = Object.values(data.summary.country).reduce((a, b) => a + b);
     document.querySelector("#total-sample-count").innerHTML = totalSampleCount;
 
