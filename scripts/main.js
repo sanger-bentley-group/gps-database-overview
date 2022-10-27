@@ -84,7 +84,7 @@ function buildSummaryLeft(data, alpha2) {
     const totalSampleCount = Object.values(data.summary.country).reduce((a, b) => a + b);
     document.querySelector("#total-sample-count").innerHTML = totalSampleCount;
 
-    const totalCountryCount = Object.keys(data.summary.country).filter((e) => alpha2.hasOwnProperty(e)).length;
+    const totalCountryCount = Object.keys(data.summary.country).filter((e) => e !== "NaN").length;
     document.querySelector("#total-country-count").innerHTML = totalCountryCount;
 
     const totalYearValues = Object.keys(data.summary.year_of_collection).filter((e) => e !== "NaN");
