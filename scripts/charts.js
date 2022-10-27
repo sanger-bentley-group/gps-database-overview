@@ -1,18 +1,12 @@
+// Build donut charts in Summary View
 function buildDonutChart(data, group) {
     const container = document.querySelector(`#summary-view-${group}-chart`);
 
+    // Set dimension of the chart
     const diameter = 500;
     const radius = diameter / 2;
 
-    const svgContainer = d3.select(container);
-    
-    const svg = svgContainer.append("svg")
-        .attr("viewBox", `0 0 ${diameter} ${diameter}`)
-    
-    const chart = svg.append("g")
-        .attr("transform", `translate(${radius},${radius})`);
-
-    
+    // Prepare data structure
     let dataArr = [];
 
     for (key in data) {
@@ -21,9 +15,24 @@ function buildDonutChart(data, group) {
         dataArr.push({ key: key, value: data[key] });
     }
 
+    // Select svg container
+    const svgContainer = d3.select(container);
+    
+    // Add svg into container
+    const svg = svgContainer.append("svg")
+        .attr("viewBox", `0 0 ${diameter} ${diameter}`)
+    
+    // Add chart area in svg
+    const chart = svg.append("g")
+        .attr("transform", `translate(${radius},${radius})`);
+
+    // Setup color scale
     const color = d3.scaleOrdinal(d3.schemeCategory10);
+    
+    // Setup arcs generator
     const arcs = d3.pie().value((d) => d.value);
 
+    // Add arcs
     chart.selectAll("path")
     .data(arcs(dataArr))
     .join("path")
@@ -34,18 +43,26 @@ function buildDonutChart(data, group) {
         .attr("fill", (d) => color(d.data.key))
         .attr("stroke", "white")
         .style("stroke-width", "1px")
-        .attr("data-country", (d) => d.data.key)
-        .attr("data-count", (d) => d.value);
+        .on("mouseenter", function (_ignore, d) {
+            chart.select(`.key-${group}`).text(d.data.key);
+            chart.select(`.value-${group}`).text(d.value);
+        })
+        .on("mouseleave", function () {
+            chart.select(`.key-${group}`).text("");
+            chart.select(`.value-${group}`).text("");
+        });
     
+    // Add key text place
     chart.append("text")
-        .text("KEY")
+        .text("")
             .attr("transform", `translate(0 -${radius / 5})`)
             .style("text-anchor", "middle")
             .style("font-size", "36px")
             .attr("class", `key-${group}`);
     
+    // Add value text place
     chart.append("text")
-        .text("Value")
+        .text("")
             .attr("transform", `translate(0 ${radius / 5})`)
             .style("text-anchor", "middle")
             .style("font-size", "48px")
