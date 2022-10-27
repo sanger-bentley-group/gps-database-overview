@@ -1,3 +1,7 @@
+// Selection Transition Time for All Charts
+const selectTransitTime = 100;
+
+
 // Build donut charts in Summary View
 function buildDonutChart(data, group) {
     const container = document.querySelector(`#summary-view-${group}-chart`);
@@ -44,29 +48,53 @@ function buildDonutChart(data, group) {
         .attr("stroke", "white")
         .style("stroke-width", "1px")
         .on("mouseenter", function (_ignore, d) {
-            chart.select(`.key-${group}`).text(d.data.key);
-            chart.select(`.value-${group}`).text(d.value);
+            chart.selectAll("path")
+                .filter((e) => d.data.key !== e.data.key)
+                .transition("arc")
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
+                    .attr("opacity", 0.2);
+            chart.selectAll(`.${group}-${d.data.key.replace(/[\W]+/g,"_")}`)
+            .transition("text")
+            .duration(selectTransitTime)
+            .ease(d3.easeLinear)
+                .attr("opacity", 1);
         })
-        .on("mouseleave", function () {
-            chart.select(`.key-${group}`).text("");
-            chart.select(`.value-${group}`).text("");
+        .on("mouseleave", function (_ignore, d) {
+            chart.selectAll("path")
+            .filter((e) => d.data.key !== e.data.key)
+            .transition("arc")
+            .duration(selectTransitTime)
+            .ease(d3.easeLinear)
+                .attr("opacity", 1);
+            chart.selectAll(`.${group}-${d.data.key.replace(/[\W]+/g,"_")}`)
+            .transition("text")
+            .duration(selectTransitTime)
+            .ease(d3.easeLinear)
+                .attr("opacity", 0);
         });
     
-    // Add key text place
-    chart.append("text")
-        .text("")
-            .attr("transform", `translate(0 -${radius / 5})`)
+    // Add hidden key texts
+    chart.selectAll("key")
+        .data(arcs(dataArr))
+        .join("text")
+            .text((d) => d.data.key)
+            .attr("transform", `translate(0 -${radius / 10})`)
             .style("text-anchor", "middle")
             .style("font-size", "36px")
-            .attr("class", `key-${group}`);
+            .attr("opacity", 0)
+            .attr("class", (d) => `${group}-${d.data.key.replace(/[\W]+/g,"_")}`);
     
-    // Add value text place
-    chart.append("text")
-        .text("")
-            .attr("transform", `translate(0 ${radius / 5})`)
-            .style("text-anchor", "middle")
-            .style("font-size", "48px")
-            .attr("class", `value-${group}`);
+    // Add hidden value texts
+    chart.selectAll("key")
+    .data(arcs(dataArr))
+    .join("text")
+        .text((d) => d.value.toLocaleString())
+        .attr("transform", `translate(0 ${radius / 5})`)
+        .style("text-anchor", "middle")
+        .style("font-size", "48px")
+        .attr("opacity", 0)
+        .attr("class", (d) => `${group}-${d.data.key.replace(/[\W]+/g,"_")}`);
 }
 
 
@@ -175,7 +203,6 @@ function buildBarChart(data, group) {
         .attr("width", xScale.bandwidth())
         .attr("height", height - yScale(0))
         .attr("fill", "#633AB5")
-        .attr("opacity", 1)
         .attr("class", (d) => `bar-${group} ${group}-${d.key}`);
 
     // Bar animation to target height
@@ -199,8 +226,6 @@ function buildBarChart(data, group) {
         .attr("class", (d) => `value-${group} text-${group} ${group}-${d.key}`);
     
     // Add selection zones for the whole height. Add interactivity and animations to the zones. 
-    const selectTransitTime = 100;
-
     chart.selectAll("selectionZone")
     .data(dataArr)
     .join("rect")
@@ -211,7 +236,7 @@ function buildBarChart(data, group) {
         .attr("opacity", 0)
         .on("mouseenter", function (_ignore, d) {
             chart.selectAll(`.bar-${group},.label-${group}`)
-                .filter((e) => e.key != d.key)
+                .filter((e) => e.key !== d.key)
                     .transition("barLabel")
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
@@ -226,7 +251,7 @@ function buildBarChart(data, group) {
         })
         .on("mouseleave", function (_ignore, d) {
             chart.selectAll(`.bar-${group},.label-${group}`)
-                .filter((e) => e.key != d.key)
+                .filter((e) => e.key !== d.key)
                 .transition("barLabel")
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
