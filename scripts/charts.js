@@ -14,9 +14,9 @@ function buildDonutChart(data, group) {
     let dataArr = [];
 
     for (key in data) {
-        // Comment out below to include unknown data
+        // Comment out below line to include unknown data
         if (key === "NaN") { continue; }
-        dataArr.push({ key: key, value: data[key] });
+        dataArr.push({ key: key !== "NaN" ? key : "Unknown" , value: data[key] });
     }
 
     // Select svg container
