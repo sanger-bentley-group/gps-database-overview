@@ -47,7 +47,7 @@ function buildDonutChart(data, group) {
     // Interpolate from start angle to end angle of the pieGenerator
     const angleInterpolate = d3.interpolate(pieGenerator.startAngle()(), pieGenerator.endAngle()());
 
-    // Draw arcs
+    // Draw arcs with load animations
     chart.selectAll("path")
     .data(arcData)
     .join("path")
@@ -81,18 +81,19 @@ function buildDonutChart(data, group) {
                 .attr("opacity", 0);
         })
         .transition("arcBuilding")
+        .ease(d3.easeCubicOut)
         .duration(1000)
-        .attrTween("d", function(d) {
-            const endAngle = d.endAngle;
-            return function(t) {
-                let currentAngle = angleInterpolate(t);
-                if (currentAngle < d.startAngle) {
-                    return ""
+            .attrTween("d", function(d) {
+                const endAngle = d.endAngle;
+                return function(t) {
+                    let currentAngle = angleInterpolate(t);
+                    if (currentAngle < d.startAngle) {
+                        return ""
+                    }
+                    d.endAngle = Math.min(currentAngle, endAngle);
+                    return arcGenerator(d)
                 }
-                d.endAngle = Math.min(currentAngle, endAngle);
-                return arcGenerator(d)
-            }
-        });
+            });
     
     // Add hidden key texts
     chart.selectAll("key")
@@ -214,24 +215,30 @@ function buildBarChart(data, group) {
     // Remove domain lines 
     chart.selectAll(".domain").remove();
     
-    // Add bars, zero height to allow animation
+    // Draw bars with load animations
     chart.selectAll("bar")
     .data(dataArr)
     .join("rect")
         .attr("x", (d) => xScale(d.key))
-        .attr("y", yScale(0))
         .attr("width", xScale.bandwidth())
-        .attr("height", height - yScale(0))
         .attr("fill", "#633AB5")
-        .attr("class", (d) => `bar-${group} ${group}-${d.key}`);
-
-    // Bar animation to target height
-    chart.selectAll(`.bar-${group}`)
+        .attr("class", (d) => `bar-${group} ${group}-${d.key}`)
         .transition("growBar")
-        .duration(300)
-        .attr("y", function(d) { return yScale(d.value); })
-        .attr("height", function(d) { return height - yScale(d.value); })
         .delay((_ignore,i) => i*1000/dataArr.length)
+        .ease(d3.easeCubicOut)
+        .duration(300)
+            .attrTween("y", function (d) {
+                return function (t) {
+                    const yInterpolate = d3.interpolate(yScale(0), yScale(d.value));
+                    return yInterpolate(t)
+                }
+            })
+            .attrTween("height", function (d) {
+                return function (t) {
+                    const heightInterpolate = d3.interpolate(height - yScale(0), height - yScale(d.value));
+                    return heightInterpolate(t)
+                }
+            })
 
     // Add hidden values at the top of bars
     chart.selectAll("value")
