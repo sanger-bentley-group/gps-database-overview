@@ -176,7 +176,7 @@ function byCountryInit(data, map, alpha2) {
                 byCountryViewDetails.classList.remove("hidden");
 
                 const countryAlpha2 = getAlpha2(e.target);
-                buildByCountryDetails(countryAlpha2, alpha2);
+                buildByCountryDetails(data["country"][countryAlpha2], countryAlpha2, alpha2);
             });
         });
     });
@@ -226,8 +226,8 @@ function getAlpha2(elem) {
 
 
 // Build By Country Details
-function buildByCountryDetails(countryAlpha2, alpha2) {
+function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
     const byCountryViewTitle = document.querySelector("#by-country-view-details-title");
     byCountryViewTitle.innerHTML = alpha2[countryAlpha2];
-    // TODO
+    buildStackedChart(countryData["age"]);
 }

@@ -297,3 +297,98 @@ function buildBarChart(data, group) {
                     .attr("opacity", 0)
         });
 }
+
+// Build stacked bar charts in Country View
+function buildStackedChart(data) {
+    const container = document.querySelector("#by-country-view-details-content-chart");
+
+    container.innerHTML = ""
+
+    // Set dimension of the chart
+    const margin = {top: 30, right: 10, bottom: 70, left: 60},
+    width = 800 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+    // Select svg container
+    const svgContainer = d3.select(container);
+
+    // Add svg into container
+    const svg = svgContainer.append("svg")
+        .attr("viewBox", `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`);
+    
+    // Add chart area in svg
+    const chart = svg.append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Setup color scale
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    let groupSet = new Set();
+    let keySet = new Set();
+
+    let dataArr = [];
+    let maxSum = 0;
+    for (const [group, keys] of Object.entries(data)) {
+        groupSet.add(group);
+        let dataArrEle = {group: group}
+        let curSum = 0;
+        for (let [key, val] of Object.entries(keys)) {
+            if (key === "NaN") {
+                key = "Unknown";
+            }
+            keySet.add(key);
+            dataArrEle[key] = val;
+            curSum += val;
+        }
+        dataArr.push(dataArrEle);
+        maxSum = Math.max(maxSum, curSum);
+    }
+
+    // Setup X-axis band scale
+    const xScale = d3.scaleBand()
+        .range([ 0, width ])
+        .domain(groupSet)
+        .padding(0.1);
+    
+    // Round up to next order of magnitude
+    const maxSumUp = Math.pow(10, Math.ceil(Math.log10(maxSum)));
+
+    // Setup Y-axis linear scale
+    const yScale = d3.scaleLinear()
+        .domain([0, maxSumUp])
+        .range([ height, 0]);
+
+    // Add X-axis and labels
+    chart.append("g")
+    .attr("transform", `translate(0, ${height})`)
+    .call(d3.axisBottom(xScale).tickSizeOuter(0));
+
+    // Add Y-axis grid lines and labels
+        chart.append("g")
+        .call(d3.axisLeft(yScale).ticks(5).tickSize(-width));
+    
+    // Remove domain lines 
+    chart.selectAll(".domain").remove();
+
+    // Stack Generator
+    let stackGenerator = d3.stack()
+        .keys(keySet)
+        .value((d, key) => d[key] ?? 0);
+
+    // Pass dataArr into Stack Generator
+    let stackData = stackGenerator(dataArr);
+
+    // Draw bars
+    chart.append("g")
+        .selectAll("g")
+        .data(stackData)
+        .join("g")
+            .attr("fill", (d) => color(d.key))
+        .selectAll("rect")
+        .data((d) => d)
+        .join("rect")
+            .attr("x", (d) => xScale(d.data.group))
+            .attr("y", (d) => yScale(d[1]))
+            .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
+            .attr("width",xScale.bandwidth())
+}
