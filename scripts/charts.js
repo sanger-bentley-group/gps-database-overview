@@ -305,7 +305,7 @@ function buildStackedChart(data, type) {
     container.innerHTML = ""
 
     // Set dimension of the chart
-    const margin = {top: 30, right: 10, bottom: 70, left: 60},
+    const margin = {top: 80, right: 30, bottom: 70, left: 60},
     width = 800 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
@@ -377,6 +377,7 @@ function buildStackedChart(data, type) {
     .attr("transform", `translate(0, ${height})`)
     .call(d3.axisBottom(xScale).tickSizeOuter(0));
 
+    // Add X-axis label
     chart.append("text")             
         .attr("transform", `translate(${width/2}, ${height + margin.top + 20})`)
         .style("text-anchor", "middle")
@@ -410,19 +411,31 @@ function buildStackedChart(data, type) {
             .attr("y", (d) => yScale(d[1]))
             .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
             .attr("width",xScale.bandwidth())
-
     
+    // Setup color scale for vaccine period highlights
+    const labelBGColor = d3.scaleOrdinal()
+        .domain(["Pre-PCV", "Post-PCV7", "Post-PCV10", "Post-PCV13"])
+        .range(d3.schemeSet3)
+
     // Add vaccine period labels and separators
     for (const [i, [range, period]] of Object.entries(data["vaccine_period"]).entries()) {
         const rangeArr = range.split(",");
-        
-        // Add label
+
+        // Add vaccine period
         chart.append("text")
             .text(period)
             .style("font-size", "12px")
-            .style("text-anchor", "middle")
-            .attr("x", (xScale(rangeArr[0]) + xScale(rangeArr[1]) + xScale.bandwidth()) / 2)
-            .attr("y", -margin.top/2);
+            .style("text-anchor", "start")
+            .attr("transform", `translate(${(xScale(rangeArr[0]) + xScale(rangeArr[1]) + xScale.bandwidth()) / 2},-15)rotate(-45)`);
+        
+        // Add vaccine period highlight
+        chart.append("line")
+            .attr("x1", xScale(rangeArr[0]))
+            .attr("y1", -10)
+            .attr("x2", xScale(rangeArr[1]) + xScale.bandwidth())
+            .attr("y2", -10)
+            .style("stroke-width", 3)
+            .style("stroke", labelBGColor(period));
 
         // Skip adding separator if this is the last period
         if (i === Object.keys(data["vaccine_period"]).length - 1) {
