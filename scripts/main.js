@@ -229,5 +229,5 @@ function getAlpha2(elem) {
 function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
     const byCountryViewTitle = document.querySelector("#by-country-view-details-title");
     byCountryViewTitle.innerHTML = alpha2[countryAlpha2];
-    buildStackedChart(countryData["age"]);
+    buildStackedChart(countryData, "age");
 }

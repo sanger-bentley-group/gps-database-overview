@@ -299,7 +299,7 @@ function buildBarChart(data, group) {
 }
 
 // Build stacked bar charts in Country View
-function buildStackedChart(data) {
+function buildStackedChart(data, type) {
     const container = document.querySelector("#by-country-view-details-content-chart");
 
     container.innerHTML = ""
@@ -321,14 +321,14 @@ function buildStackedChart(data) {
         .attr("transform", `translate(${margin.left},${margin.top})`);
 
     // Setup color scale
-    const color = d3.scaleOrdinal(d3.schemeCategory10);
+    const color = d3.scaleOrdinal(d3.schemeTableau10);
 
     let groupSet = new Set();
     let keySet = new Set();
 
     let dataArr = [];
     let maxSum = 0;
-    for (const [group, keys] of Object.entries(data)) {
+    for (const [group, keys] of Object.entries(data[type])) {
         groupSet.add(group);
         let dataArrEle = {group: group}
         let curSum = 0;
@@ -391,4 +391,33 @@ function buildStackedChart(data) {
             .attr("y", (d) => yScale(d[1]))
             .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
             .attr("width",xScale.bandwidth())
+
+    
+    // Add vaccine period labels and separators
+    for (const [i, [range, period]] of Object.entries(data["vaccine_period"]).entries()) {
+        const rangeArr = range.split(",");
+        
+        // Add label
+        chart.append("text")
+            .text(period)
+            .style("font-size", "12px")
+            .style("text-anchor", "middle")
+            .attr("x", (xScale(rangeArr[0]) + xScale(rangeArr[1]) + xScale.bandwidth()) / 2)
+            .attr("y", -margin.top/2);
+
+        // Skip adding separator if this is the last period
+        if (i === Object.keys(data["vaccine_period"]).length - 1) {
+            continue;
+        }
+        
+        // Add separator at the end of period
+        const paddingSize = xScale.padding() * xScale.step();
+        chart.append("line")
+            .attr("x1", xScale(rangeArr[1]) + xScale.bandwidth() + paddingSize / 2)
+            .attr("y1", -margin.top)
+            .attr("x2", xScale(rangeArr[1]) + xScale.bandwidth() + paddingSize / 2)
+            .attr("y2", height)
+            .style("stroke-width", 1)
+            .style("stroke", "black");
+    }
 }
