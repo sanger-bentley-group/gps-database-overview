@@ -178,14 +178,14 @@ function buildBarChart(data, group) {
     
     // Setup X-axis band scale
     const xScale = d3.scaleBand()
-        .range([ 0, width ])
+        .range([0, width])
         .domain(dataArr.map((d) => d.key))
         .padding(0.1);
     
     // Setup Y-axis linear scale, the upper limit is round up to closest 1000s
     const yScale = d3.scaleLinear()
         .domain([0, Math.ceil(Math.max(...Object.values(data))/1000) * 1000])
-        .range([ height, 0]);
+        .range([height, 0]);
 
     // Add X-axis and labels, replace "gt" to ">" in labels
     chart.append("g")
@@ -329,6 +329,11 @@ function buildStackedChart(data, type) {
     let dataArr = [];
     let maxSum = 0;
     for (const [group, keys] of Object.entries(data[type])) {
+        // Comment out below "if block" to include samples with unknown collection year
+        if (group === "NaN") {
+            continue
+        }
+
         groupSet.add(group);
         let dataArrEle = {group: group}
         let curSum = 0;
@@ -344,24 +349,38 @@ function buildStackedChart(data, type) {
         maxSum = Math.max(maxSum, curSum);
     }
 
+    // Early termination for country without sample 
+    if (dataArr.length === 0) {
+        chart.append("text")             
+            .attr("transform", `translate(${width/2}, ${height/2})`)
+            .style("text-anchor", "middle")
+            .text("No samples with a known collection year");
+        return
+    }
+
     // Setup X-axis band scale
     const xScale = d3.scaleBand()
-        .range([ 0, width ])
+        .range([0, width])
         .domain(groupSet)
         .padding(0.1);
     
-    // Round up to next order of magnitude
-    const maxSumUp = Math.pow(10, Math.ceil(Math.log10(maxSum)));
+    // Round up to nearest tens/hundreds/thousnds of the same magnitude
+    const maxSumUp = Math.pow(10, Math.floor(Math.log10(maxSum))) * (Number(String(maxSum)[0]) + 1);
 
     // Setup Y-axis linear scale
     const yScale = d3.scaleLinear()
         .domain([0, maxSumUp])
-        .range([ height, 0]);
+        .range([height, 0]);
 
     // Add X-axis and labels
     chart.append("g")
     .attr("transform", `translate(0, ${height})`)
     .call(d3.axisBottom(xScale).tickSizeOuter(0));
+
+    chart.append("text")             
+        .attr("transform", `translate(${width/2}, ${height + margin.top + 20})`)
+        .style("text-anchor", "middle")
+        .text("Year of Collection");
 
     // Add Y-axis grid lines and labels
         chart.append("g")
@@ -414,10 +433,12 @@ function buildStackedChart(data, type) {
         const paddingSize = xScale.padding() * xScale.step();
         chart.append("line")
             .attr("x1", xScale(rangeArr[1]) + xScale.bandwidth() + paddingSize / 2)
-            .attr("y1", -margin.top)
+            .attr("y1", -margin.top/4)
             .attr("x2", xScale(rangeArr[1]) + xScale.bandwidth() + paddingSize / 2)
             .attr("y2", height)
             .style("stroke-width", 1)
-            .style("stroke", "black");
+            .style("stroke-dasharray", ("3,3"))
+            .style("stroke", "black")
+            .attr("opacity", 0.5);
     }
 }
