@@ -426,7 +426,7 @@ function buildStackedChart(data, type) {
             .text(period)
             .style("font-size", "12px")
             .style("text-anchor", "start")
-            .attr("transform", `translate(${(xScale(rangeArr[0]) + xScale(rangeArr[1]) + xScale.bandwidth()) / 2},-15)rotate(-45)`);
+            .attr("transform", `translate(${xScale(rangeArr[0]) + 5},-15)rotate(-20)`);
         
         // Add vaccine period highlight
         chart.append("line")
