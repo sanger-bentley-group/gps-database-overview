@@ -305,7 +305,7 @@ function buildStackedChart(data, type) {
     container.innerHTML = ""
 
     // Set dimension of the chart
-    const margin = {top: 80, right: 30, bottom: 70, left: 60},
+    const margin = {top: 80, right: 50, bottom: 70, left: 60},
     width = 800 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
@@ -364,8 +364,8 @@ function buildStackedChart(data, type) {
         .domain(groupSet)
         .padding(0.1);
     
-    // Round up to nearest tens/hundreds/thousnds of the same magnitude
-    const maxSumUp = Math.pow(10, Math.floor(Math.log10(maxSum))) * (Number(String(maxSum)[0]) + 1);
+    // Round up to nearest tens/hundreds/thousnds of the same magnitude, or at least 10
+    const maxSumUp = Math.max(Math.pow(10, Math.floor(Math.log10(maxSum))) * (Number(String(maxSum)[0]) + 1), 10);
 
     // Setup Y-axis linear scale
     const yScale = d3.scaleLinear()
@@ -410,7 +410,7 @@ function buildStackedChart(data, type) {
             .attr("x", (d) => xScale(d.data.group))
             .attr("width",xScale.bandwidth())
             .transition("growStackBar")
-            .delay((_ignore,i) => i*10)
+            .delay((_ignore,i) => i*1000/dataArr.length)
             .ease(d3.easeCubicOut)
             .duration(300)
                 .attrTween("y", function (d) {
@@ -435,13 +435,28 @@ function buildStackedChart(data, type) {
     for (const [i, [range, period]] of Object.entries(data["vaccine_period"]).entries()) {
         const rangeArr = range.split(",");
 
+        // Interpolate from left to right of chart
+        const lineInterpolate = d3.interpolate(0, width);
+
         // Add vaccine period
         chart.append("text")
             .text(period)
             .style("font-size", "12px")
             .style("text-anchor", "start")
-            .attr("transform", `translate(${xScale(rangeArr[0]) + 5},-15)rotate(-20)`);
-        
+            .attr("transform", `translate(${xScale(rangeArr[0]) + 5},-15)rotate(-20)`)
+            .transition("showPeriodLabel")
+            .duration(1000)
+                .attrTween("opacity", function() {
+                    return function(t) {
+                        let current = lineInterpolate(t);
+                        if (current < xScale(rangeArr[0])) {
+                            return 0
+                        } else {
+                            return Math.min((current - xScale(rangeArr[0])) / xScale.bandwidth(), 1)
+                        }
+                    }
+                });
+
         // Add vaccine period highlight
         chart.append("line")
             .attr("x1", xScale(rangeArr[0]))
@@ -449,7 +464,19 @@ function buildStackedChart(data, type) {
             .attr("x2", xScale(rangeArr[1]) + xScale.bandwidth())
             .attr("y2", -10)
             .style("stroke-width", 3)
-            .style("stroke", labelBGColor(period));
+            .style("stroke", labelBGColor(period))
+            .transition("growPeriodLine")
+            .duration(1000)
+                .attrTween("x2", function() {
+                    return function(t) {
+                        let current = lineInterpolate(t);
+                        if (current < xScale(rangeArr[0])) {
+                            return xScale(rangeArr[0])
+                        } else {
+                            return Math.min(current, xScale(rangeArr[1]) + xScale.bandwidth())
+                        }
+                    }
+                });
 
         // Skip adding separator if this is the last period
         if (i === Object.keys(data["vaccine_period"]).length - 1) {
@@ -466,6 +493,18 @@ function buildStackedChart(data, type) {
             .style("stroke-width", 1)
             .style("stroke-dasharray", ("3,3"))
             .style("stroke", "black")
-            .attr("opacity", 0.5);
+            .transition("showPeriodSeparator")
+            .duration(1000)
+                .attrTween("opacity", function() {
+                    return function(t) {
+                        let current = lineInterpolate(t);
+                        if (current < xScale(rangeArr[1])) {
+                            return 0
+                        } else {
+                            return Math.min((current - xScale(rangeArr[1])) / xScale.bandwidth(), 0.5)
+                        }
+                    }
+                });
+
     }
 }
