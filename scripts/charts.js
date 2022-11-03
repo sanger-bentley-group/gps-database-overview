@@ -469,9 +469,12 @@ function buildStackedChart(data, type) {
                         .style("font-size", "16px");
             d3.select('#by-country-view-details-content-tooltip-title').html(d.data.group);
             
-            d.data.forEach(function(data){
-                console.log(data);
-            })
+            for (const [key, val] of Object.entries(d.data)) {
+                if (key === "group") {
+                    continue
+                }
+                d3.select('#by-country-view-details-content-tooltip-content').append("p").text(`${key} ${val}`);
+            };
         })
         .on("mouseleave", function (_ignore, d) {
             chart.selectAll(`.subbar-${type}`)
@@ -492,6 +495,9 @@ function buildStackedChart(data, type) {
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
                         .style("font-size", "12px");
+
+            d3.select('#by-country-view-details-content-tooltip-title').html("");
+            d3.select('#by-country-view-details-content-tooltip-content').html("");
         });
 
     // Setup color scale for vaccine period highlights

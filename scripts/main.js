@@ -228,6 +228,20 @@ function getAlpha2(elem) {
 // Build By Country Details
 function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
     const byCountryViewTitle = document.querySelector("#by-country-view-details-title");
+    const byAgeButton = document.querySelector("#by-age-button");
+    const byManifestationButton = document.querySelector("#by-manifestation-button");
+
     byCountryViewTitle.innerHTML = alpha2[countryAlpha2];
     buildStackedChart(countryData, "age");
+
+    byAgeButton.addEventListener("click", function() {
+        byAgeButton.classList.add("country-button-active");
+        byManifestationButton.classList.remove("country-button-active");
+        buildStackedChart(countryData, "age");
+    })
+    byManifestationButton.addEventListener("click", function() {
+        byAgeButton.classList.remove("country-button-active");
+        byManifestationButton.classList.add("country-button-active");
+        buildStackedChart(countryData, "manifestation");
+    })
 }

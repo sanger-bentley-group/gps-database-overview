@@ -440,11 +440,12 @@ a {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
     width: 200px;
-    height: 400px;
+    height: 480px;
 
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     gap: 1em;
 
     transition-duration: 0.3s;
