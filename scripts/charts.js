@@ -408,9 +408,23 @@ function buildStackedChart(data, type) {
         .data((d) => d)
         .join("rect")
             .attr("x", (d) => xScale(d.data.group))
-            .attr("y", (d) => yScale(d[1]))
-            .attr("height", (d) => yScale(d[0]) - yScale(d[1]))
             .attr("width",xScale.bandwidth())
+            .transition("growStackBar")
+            .delay((_ignore,i) => i*10)
+            .ease(d3.easeCubicOut)
+            .duration(300)
+                .attrTween("y", function (d) {
+                    return function (t) {
+                        const yInterpolate = d3.interpolate(height, yScale(d[1]));
+                        return yInterpolate(t)
+                    }
+                })
+                .attrTween("height", function (d) {
+                    return function (t) {
+                        const heightInterpolate = d3.interpolate(0, yScale(d[0]) - yScale(d[1]));
+                        return heightInterpolate(t)
+                    }
+                })
     
     // Setup color scale for vaccine period highlights
     const labelBGColor = d3.scaleOrdinal()
