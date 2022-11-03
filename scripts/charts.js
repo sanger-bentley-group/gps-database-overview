@@ -128,41 +128,32 @@ function buildBarChart(data, group) {
     width = 800 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
-    // Get known data and range
-    const dataNums = Object.keys(data).filter((x) => !isNaN(x));
-    const dataNumsMin = Math.min(...dataNums);
-    const dataNumsMax = Math.max(...dataNums);
 
-    // Except age, build bars for the whole range and fill in missing ones
+    // For year of collection, build bars for the whole range and fill in missing ones
     // For age, build bars according to ageBins
     let dataArr = [];
 
-    if (group !== "age") {
+    if (group === "year_of_collection") {
+        const dataNums = Object.keys(data).filter((x) => !isNaN(x));
+        const dataNumsMin = Math.min(...dataNums);
+        const dataNumsMax = Math.max(...dataNums);
+
         for (let i = dataNumsMin; i <= dataNumsMax; i++) {
             dataArr.push({ key: i, value: data[i] ?? 0 });
         }
-    } else {
-        // In ageBins, Int for single value, 2-element array for range. Last item must be an array with dataNumsMax as the second element
-        let ageBins = [0, 1, 2, 3, 4, 5, [6, 10], [11, 20], [21, 30], [31, 40], [41, 50], [51, 60], [61, 70], [71, dataNumsMax]]
-        ageBins.forEach(bin => {
-            if (!Array.isArray(bin)) {
-                dataArr.push({ key: bin, value: data[bin] ?? 0 });
-            } else {
-                let accum = 0;
-                for (let i = bin[0]; i <= bin[1]; i++){
-                    accum += data[i] ?? 0; 
-                }
-                // "gt" is used instead of ">" to avoid class/id name issues
-                const keyName = bin[1] !== dataNumsMax ? `${bin[0]}-${bin[1]}` : `gt${bin[0]-1}`;
-                dataArr.push({ key: keyName, value: accum });
-            }
-        });
-    }
 
-    // Uncomment below to show unknown data
-    // if (Object.keys(data).filter((x) => isNaN(x)).length) {
-    //     dataArr.push({ key: "Unknown", value: data["NaN"] });
-    // }
+        // Uncomment below to show unknown year of collection
+        // if (Object.keys(data).filter((x) => isNaN(x)).length) {
+        //     dataArr.push({ key: "Unknown", value: data["NaN"] });
+        // }
+    } else if (group === "age"){
+        for (const [key, val] of Object.entries(data)) {
+            // Comment below to show unknown age
+            if (key === "NaN") { continue }
+
+            dataArr.push({ key: key.toString().replace(">", "gt"), value: val });
+        }
+    }
 
 
     // Select svg container
