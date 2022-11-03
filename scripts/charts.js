@@ -252,7 +252,7 @@ function buildBarChart(data, group) {
         .attr("opacity", 0)
         .attr("class", (d) => `value-${group} text-${group} ${group}-${d.key}`);
     
-    // Add selection zones for the whole height. Add interactivity and animations to the zones. 
+    // Add selection zones for the whole height. Add interactivity and animations to the zones
     chart.selectAll("selectionZone")
     .data(dataArr)
     .join("rect")
@@ -374,12 +374,20 @@ function buildStackedChart(data, type) {
 
     // Add X-axis and labels
     chart.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(xScale).tickSizeOuter(0));
+        .attr("transform", `translate(0, ${height})`)
+        .call(d3.axisBottom(xScale).tickSizeOuter(0))
+        .selectAll("text")
+            .style("font-size", "12px")
+            .attr("class", `label-${type}`);
 
+    // Add data-specific class for X-axis labels
+    document.querySelectorAll(`.label-${type}`).forEach(function(textNode) {
+        textNode.classList.add(`${type}-${textNode.innerHTML}`);
+    });
+    
     // Add X-axis label
     chart.append("text")             
-        .attr("transform", `translate(${width/2}, ${height + margin.top + 20})`)
+        .attr("transform", `translate(${width/2}, ${height + margin.top - 20})`)
         .style("text-anchor", "middle")
         .text("Year of Collection");
 
@@ -409,6 +417,7 @@ function buildStackedChart(data, type) {
         .join("rect")
             .attr("x", (d) => xScale(d.data.group))
             .attr("width",xScale.bandwidth())
+            .attr("class", `subbar-${type}`)
             .transition("growStackBar")
             .delay((_ignore,i) => i*1000/dataArr.length)
             .ease(d3.easeCubicOut)
@@ -424,8 +433,67 @@ function buildStackedChart(data, type) {
                         const heightInterpolate = d3.interpolate(0, yScale(d[0]) - yScale(d[1]));
                         return heightInterpolate(t)
                     }
-                })
+                });
     
+    // Add selection zones for the whole height. Add interactivity and animations to the zones
+    chart.append("g")
+    .selectAll("g")
+    .data(stackData)
+    .join("g")
+        .attr("opacity", 0)
+    .selectAll("selectionZone")
+    .data((d) => d)
+    .join("rect")
+        .attr("x", (d) => xScale(d.data.group))
+        .attr("y", 0)
+        .attr("width",xScale.bandwidth() + 10)
+        .attr("height",height + 20)
+        .on("mouseenter", function (_ignore, d) {
+            chart.selectAll(`.subbar-${type}`)
+                .filter((e) => e.data.group !== d.data.group)
+                    .transition(`subbar${type}`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0.2);
+            chart.selectAll(`.label-${type}`)
+                .filter((e) => e !== (d.data.group))
+                    .transition(`label${type}opacity`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0.2);
+            chart.selectAll(`.label-${type}`)
+                .filter((e) => e === (d.data.group))
+                    .transition(`label${type}size`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .style("font-size", "16px");
+            d3.select('#by-country-view-details-content-tooltip-title').html(d.data.group);
+            
+            d.data.forEach(function(data){
+                console.log(data);
+            })
+        })
+        .on("mouseleave", function (_ignore, d) {
+            chart.selectAll(`.subbar-${type}`)
+                .filter((e) => e.data.group !== d.data.group)
+                .transition(`subbar${type}`)
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
+                    .attr("opacity", 1);
+            chart.selectAll(`.label-${type}`)
+                .filter((e) => e !== (d.data.group))
+                    .transition(`label${type}opacity`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 1);
+            chart.selectAll(`.label-${type}`)
+                .filter((e) => e === (d.data.group))
+                    .transition(`label${type}size`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .style("font-size", "12px");
+        });
+
     // Setup color scale for vaccine period highlights
     const labelBGColor = d3.scaleOrdinal()
         .domain(["Pre-PCV", "Post-PCV7", "Post-PCV10", "Post-PCV13"])
