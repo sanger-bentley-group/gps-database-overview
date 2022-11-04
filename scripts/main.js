@@ -232,7 +232,13 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
     const byManifestationButton = document.querySelector("#by-manifestation-button");
 
     byCountryViewTitle.innerHTML = alpha2[countryAlpha2];
-    buildStackedChart(countryData, "age");
+
+    const activeButton = document.querySelector(".country-button-active");
+    if (activeButton === byAgeButton) {
+        buildStackedChart(countryData, "age");
+    } else if (activeButton === byManifestationButton) {
+        buildStackedChart(countryData, "manifestation");
+    }
 
     byAgeButton.addEventListener("click", function() {
         byAgeButton.classList.add("country-button-active");
