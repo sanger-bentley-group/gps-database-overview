@@ -249,7 +249,7 @@ function buildBarChart(data, group) {
     .join("rect")
         .attr("x", (d) => xScale(d.key))
         .attr("y", 0)
-        .attr("width", xScale.bandwidth() + 10)
+        .attr("width", xScale.bandwidth() + xScale.padding() * xScale.step() * 2)
         .attr("height", height + margin.bottom)
         .attr("opacity", 0)
         .on("mouseenter", function (_ignore, d) {
@@ -442,8 +442,8 @@ function buildStackedChart(data, type) {
         .join("rect")
             .attr("x", (d) => xScale(d.data.group))
             .attr("y", 0)
-            .attr("width",xScale.bandwidth() + 10)
-            .attr("height",height + 20)
+            .attr("width", xScale.bandwidth() + xScale.padding() * xScale.step() * 2)
+            .attr("height", height + 20)
             .on("mouseenter", function (_ignore, d) {
                 chart.selectAll(`.subbar-${type}`)
                     .filter((e) => e.data.group !== d.data.group)
@@ -479,7 +479,7 @@ function buildStackedChart(data, type) {
                     .duration(selectTransitTime)
                         .style("opacity", 1);
 
-                let i = 1;
+                let i = 0;
                 for (const key of Object.keys(d.data).reverse()) {
                     const val = d.data[key];
                     if (key === "group" | val === 0) { continue; }
@@ -487,7 +487,7 @@ function buildStackedChart(data, type) {
                     chart.append("circle")
                         .attr("r", 5)
                         .attr("cx", width + 20)
-                        .attr("cy", i * 20)
+                        .attr("cy", i * 20 + 20)
                         .attr("fill", color(key))
                         .attr("class", "legend")
                         .style("opacity", 0)
@@ -496,7 +496,7 @@ function buildStackedChart(data, type) {
                             .style("opacity", 1);
                     
                     chart.append("text")
-                        .attr("transform", `translate(${width + 40}, ${i * 20 + 5})`)
+                        .attr("transform", `translate(${width + 40}, ${i * 20 + 25})`)
                         .attr("class", "legend")
                         .style("opacity", 0)
                         .style("font-size", "14px")
@@ -506,7 +506,7 @@ function buildStackedChart(data, type) {
                             .style("opacity", 1);
                     
                     chart.append("text")
-                        .attr("transform", `translate(${width + margin.right}, ${i * 20 + 5})`)
+                        .attr("transform", `translate(${width + margin.right}, ${i * 20 + 25})`)
                         .attr("class", "legend")
                         .style("opacity", 0)
                         .style("text-anchor", "end")
@@ -517,6 +517,19 @@ function buildStackedChart(data, type) {
                             .style("opacity", 1);
 
                     i += 1;
+                }
+                
+                if (i == 0) {
+                    chart.append("text")
+                        .attr("transform", `translate(${width + margin.right/2}, 25)`)
+                        .attr("class", "legend")
+                        .style("text-anchor", "middle")
+                        .style("opacity", 0)
+                        .style("font-size", "14px")
+                        .text("No samples")
+                        .transition("legend")
+                        .duration(selectTransitTime)
+                            .style("opacity", 1);
                 }
             })
             .on("mouseleave", function (_ignore, d) {
