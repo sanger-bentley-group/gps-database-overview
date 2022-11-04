@@ -473,13 +473,55 @@ function buildStackedChart(data, type) {
                 
                 chart.append("text")             
                     .attr("transform", `translate(${width + margin.right/2}, 0)`)
-                    .attr("class", "legendTitle")
+                    .attr("class", "legend")
                     .style("text-anchor", "middle")
                     .style("opacity", 0)
                     .text(d.data.group)
-                    .transition("legendTitle")
-                    .duration(selectTransitTime/2)
+                    .transition("legend")
+                    .duration(selectTransitTime)
                         .style("opacity", 1);
+
+                let i = 1;
+                for (const key of Object.keys(d.data).reverse()) {
+                    const val = d.data[key];
+                    if (key === "group" | val === 0) {
+                        continue
+                    }
+                    
+                    chart.append("circle")
+                        .attr("r", 5)
+                        .attr("cx", width + 20)
+                        .attr("cy", i * 20)
+                        .attr("fill", color(key))
+                        .attr("class", "legend")
+                        .style("opacity", 0)
+                        .transition("legend")
+                        .duration(selectTransitTime)
+                            .style("opacity", 1);
+                    
+                    chart.append("text")
+                        .attr("transform", `translate(${width + 40}, ${i * 20 + 5})`)
+                        .attr("class", "legend")
+                        .style("opacity", 0)
+                        .style("font-size", "14px")
+                        .text(key)
+                        .transition("legend")
+                        .duration(selectTransitTime)
+                            .style("opacity", 1);
+                    
+                    chart.append("text")
+                        .attr("transform", `translate(${width + margin.right}, ${i * 20 + 5})`)
+                        .attr("class", "legend")
+                        .style("opacity", 0)
+                        .style("text-anchor", "end")
+                        .style("font-size", "14px")
+                        .text(val.toLocaleString())
+                        .transition("legend")
+                        .duration(selectTransitTime)
+                            .style("opacity", 1);
+
+                    i += 1;
+                }
             })
             .on("mouseleave", function (_ignore, d) {
                 chart.selectAll(`.subbar-${type}`)
@@ -504,13 +546,12 @@ function buildStackedChart(data, type) {
                 hint
                     .transition("hint")
                     .duration(selectTransitTime)
-                    .style("opacity", 1);
+                        .style("opacity", 1);
 
-                chart.selectAll(".legendTitle")
-                    .transition("legendTitle")
-                    .duration(selectTransitTime/2)
+                chart.selectAll(".legend")
+                    .transition("legend")
+                    .duration(selectTransitTime)
                         .style("opacity", 0)
-                    .delay(selectTransitTime/2)
                         .remove();
             });
 
