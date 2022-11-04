@@ -13,7 +13,7 @@ function buildDonutChart(data, group) {
     // Prepare data structure
     let dataArr = [];
 
-    for (key in data) {
+    for (const key in data) {
         // Comment out below line to include unknown data
         if (key === "NaN") { continue; }
         dataArr.push({ key: key !== "NaN" ? key : "Unknown" , value: data[key] });
@@ -24,7 +24,7 @@ function buildDonutChart(data, group) {
     
     // Add svg into container
     const svg = svgContainer.append("svg")
-        .attr("viewBox", `0 0 ${diameter} ${diameter}`)
+        .attr("viewBox", `0 0 ${diameter} ${diameter}`);
     
     // Add chart area in svg
     const chart = svg.append("g")
@@ -88,11 +88,11 @@ function buildDonutChart(data, group) {
                 return function(t) {
                     let currentAngle = angleInterpolate(t);
                     if (currentAngle < d.startAngle) {
-                        return ""
+                        return "";
                     }
                     d.endAngle = Math.min(currentAngle, endAngle);
-                    return arcGenerator(d)
-                }
+                    return arcGenerator(d);
+                };
             });
     
     // Add hidden key texts
@@ -149,7 +149,7 @@ function buildBarChart(data, group) {
     } else if (group === "age"){
         for (const [key, val] of Object.entries(data)) {
             // Comment below to show unknown age
-            if (key === "NaN") { continue }
+            if (key === "NaN") { continue; }
 
             dataArr.push({ key: key.toString().replace(">", "gt"), value: val });
         }
@@ -221,15 +221,15 @@ function buildBarChart(data, group) {
             .attrTween("y", function (d) {
                 return function (t) {
                     const yInterpolate = d3.interpolate(yScale(0), yScale(d.value));
-                    return yInterpolate(t)
-                }
+                    return yInterpolate(t);
+                };
             })
             .attrTween("height", function (d) {
                 return function (t) {
                     const heightInterpolate = d3.interpolate(height - yScale(0), height - yScale(d.value));
-                    return heightInterpolate(t)
-                }
-            })
+                    return heightInterpolate(t);
+                };
+            });
 
     // Add hidden values at the top of bars
     chart.selectAll("value")
@@ -285,7 +285,7 @@ function buildBarChart(data, group) {
                 .transition("value")
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
-                    .attr("opacity", 0)
+                    .attr("opacity", 0);
         });
 }
 
@@ -293,7 +293,7 @@ function buildBarChart(data, group) {
 function buildStackedChart(data, type) {
     const container = document.querySelector("#by-country-view-details-content-chart");
 
-    container.innerHTML = ""
+    container.innerHTML = "";
 
     // Set dimension of the chart
     const margin = {top: 80, right: 200, bottom: 70, left: 60},
@@ -321,12 +321,10 @@ function buildStackedChart(data, type) {
     let maxSum = 0;
     for (const [group, keys] of Object.entries(data[type])) {
         // Comment out below "if block" to include samples with unknown collection year
-        if (group === "NaN") {
-            continue
-        }
+        if (group === "NaN") { continue; }
 
         groupSet.add(group);
-        let dataArrEle = {group: group}
+        let dataArrEle = {group: group};
         let curSum = 0;
         for (let [key, val] of Object.entries(keys)) {
             if (key === "NaN") {
@@ -346,7 +344,7 @@ function buildStackedChart(data, type) {
             .attr("transform", `translate(${width/2}, ${height/2})`)
             .style("text-anchor", "middle")
             .text("No samples with a known collection year");
-        return
+        return;
     }
 
     // Setup X-axis band scale
@@ -423,14 +421,14 @@ function buildStackedChart(data, type) {
                 .attrTween("y", function (d) {
                     return function (t) {
                         const yInterpolate = d3.interpolate(height, yScale(d[1]));
-                        return yInterpolate(t)
-                    }
+                        return yInterpolate(t);
+                    };
                 })
                 .attrTween("height", function (d) {
                     return function (t) {
                         const heightInterpolate = d3.interpolate(0, yScale(d[0]) - yScale(d[1]));
-                        return heightInterpolate(t)
-                    }
+                        return heightInterpolate(t);
+                    };
                 });
     
     // Add selection zones for the whole height. Add interactivity and animations to the zones
@@ -484,9 +482,7 @@ function buildStackedChart(data, type) {
                 let i = 1;
                 for (const key of Object.keys(d.data).reverse()) {
                     const val = d.data[key];
-                    if (key === "group" | val === 0) {
-                        continue
-                    }
+                    if (key === "group" | val === 0) { continue; }
                     
                     chart.append("circle")
                         .attr("r", 5)
@@ -558,10 +554,10 @@ function buildStackedChart(data, type) {
     // Setup color scale for vaccine period highlights
     const labelBGColor = d3.scaleOrdinal()
         .domain(["Pre-PCV", "Post-PCV7", "Post-PCV10", "Post-PCV13"])
-        .range(d3.schemeSet3)
+        .range(d3.schemeSet3);
 
     // Add vaccine period labels and separators
-    for (const [i, [range, period]] of Object.entries(data["vaccine_period"]).entries()) {
+    for (const [i, [range, period]] of Object.entries(data.vaccine_period).entries()) {
         const rangeArr = range.split(",");
 
         // Interpolate from left to right of chart
@@ -579,11 +575,11 @@ function buildStackedChart(data, type) {
                     return function(t) {
                         let current = lineInterpolate(t);
                         if (current < xScale(rangeArr[0])) {
-                            return 0
+                            return 0;
                         } else {
-                            return Math.min((current - xScale(rangeArr[0])) / xScale.bandwidth(), 1)
+                            return Math.min((current - xScale(rangeArr[0])) / xScale.bandwidth(), 1);
                         }
-                    }
+                    };
                 });
 
         // Add vaccine period highlight
@@ -600,17 +596,15 @@ function buildStackedChart(data, type) {
                     return function(t) {
                         let current = lineInterpolate(t);
                         if (current < xScale(rangeArr[0])) {
-                            return xScale(rangeArr[0])
+                            return xScale(rangeArr[0]);
                         } else {
-                            return Math.min(current, xScale(rangeArr[1]) + xScale.bandwidth())
+                            return Math.min(current, xScale(rangeArr[1]) + xScale.bandwidth());
                         }
-                    }
+                    };
                 });
 
         // Skip adding separator if this is the last period
-        if (i === Object.keys(data["vaccine_period"]).length - 1) {
-            continue;
-        }
+        if (i === Object.keys(data.vaccine_period).length - 1) { continue; }
         
         // Add separator at the end of period
         const paddingSize = xScale.padding() * xScale.step();
@@ -628,11 +622,11 @@ function buildStackedChart(data, type) {
                     return function(t) {
                         let current = lineInterpolate(t);
                         if (current < xScale(rangeArr[1])) {
-                            return 0
+                            return 0;
                         } else {
-                            return Math.min((current - xScale(rangeArr[1])) / xScale.bandwidth(), 0.5)
+                            return Math.min((current - xScale(rangeArr[1])) / xScale.bandwidth(), 0.5);
                         }
-                    }
+                    };
                 });
 
     }

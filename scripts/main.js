@@ -176,7 +176,7 @@ function byCountryInit(data, map, alpha2) {
                 byCountryViewDetails.classList.remove("hidden");
 
                 const countryAlpha2 = getAlpha2(e.target);
-                buildByCountryDetails(data["country"][countryAlpha2], countryAlpha2, alpha2);
+                buildByCountryDetails(data.country[countryAlpha2], countryAlpha2, alpha2);
             });
         });
     });
@@ -246,12 +246,12 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
         byManifestationButton.classList.remove("country-button-active");
         byManifestationButton.removeAttribute("disabled");
         buildStackedChart(countryData, "age");
-    })
+    });
     byManifestationButton.addEventListener("click", function() {
         byAgeButton.classList.remove("country-button-active");
         byAgeButton.removeAttribute("disabled");
         byManifestationButton.classList.add("country-button-active");
         byManifestationButton.setAttribute("disabled", "");
         buildStackedChart(countryData, "manifestation");
-    })
+    });
 }
