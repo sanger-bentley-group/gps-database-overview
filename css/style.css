@@ -400,23 +400,29 @@ a {
 #by-country-view-details-content-button-group {
     display: flex;
     flex-direction: column;
-    gap: 2em;
 }
 
 .country-button {
     height: 50px;
-    width: 250px;
+    width: 200px;
     border: none;
-    border-radius: 10px;
     padding: 0;
 
     background-color: #C7C7FF;
     color: white;
 
-    font-size: 1.5em;
+    font-size: 1.2em;
     font-weight: lighter;
 
     transition-duration: 0.3s;
+}
+
+.country-button:first-of-type{
+    border-radius: 5px 5px 0px 0px;
+}
+
+.country-button:last-of-type{
+    border-radius: 0px 0px 5px 5px;
 }
 
 .country-button:not(.country-button-active):hover {
@@ -433,22 +439,6 @@ a {
 
     display: flex;
     justify-content: center;
-}
-
-#by-country-view-details-content-tooltip {
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-    width: 200px;
-    height: 480px;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-
-    transition-duration: 0.3s;
 }
 
 .footer-hyperlink {
