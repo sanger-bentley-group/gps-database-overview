@@ -242,12 +242,16 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
 
     byAgeButton.addEventListener("click", function() {
         byAgeButton.classList.add("country-button-active");
+        byAgeButton.setAttribute("disabled", "");
         byManifestationButton.classList.remove("country-button-active");
+        byManifestationButton.removeAttribute("disabled");
         buildStackedChart(countryData, "age");
     })
     byManifestationButton.addEventListener("click", function() {
         byAgeButton.classList.remove("country-button-active");
+        byAgeButton.removeAttribute("disabled");
         byManifestationButton.classList.add("country-button-active");
+        byManifestationButton.setAttribute("disabled", "");
         buildStackedChart(countryData, "manifestation");
     })
 }
