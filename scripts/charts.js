@@ -296,8 +296,8 @@ function buildStackedChart(data, type) {
     container.innerHTML = ""
 
     // Set dimension of the chart
-    const margin = {top: 80, right: 50, bottom: 70, left: 60},
-    width = 800 - margin.left - margin.right,
+    const margin = {top: 80, right: 200, bottom: 70, left: 60},
+    width = 1000 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
     // Select svg container
@@ -383,11 +383,18 @@ function buildStackedChart(data, type) {
         .text("Year of Collection");
 
     // Add Y-axis grid lines and labels
-        chart.append("g")
+    chart.append("g")
         .call(d3.axisLeft(yScale).ticks(5).tickSize(-width));
     
     // Remove domain lines 
     chart.selectAll(".domain").remove();
+
+    // Add hint
+    let hint = chart.append("text")             
+        .attr("transform", `translate(${width + margin.right/2}, ${height/2})`)
+        .style("text-anchor", "middle")
+        .style("fill", "#D3D3D3")
+        .text("Hover for details");
 
     // Stack Generator
     let stackGenerator = d3.stack()
@@ -428,68 +435,84 @@ function buildStackedChart(data, type) {
     
     // Add selection zones for the whole height. Add interactivity and animations to the zones
     chart.append("g")
-    .selectAll("g")
-    .data(stackData)
-    .join("g")
-        .attr("opacity", 0)
-    .selectAll("selectionZone")
-    .data((d) => d)
-    .join("rect")
-        .attr("x", (d) => xScale(d.data.group))
-        .attr("y", 0)
-        .attr("width",xScale.bandwidth() + 10)
-        .attr("height",height + 20)
-        .on("mouseenter", function (_ignore, d) {
-            chart.selectAll(`.subbar-${type}`)
-                .filter((e) => e.data.group !== d.data.group)
+        .selectAll("g")
+        .data(stackData)
+        .join("g")
+            .attr("opacity", 0)
+        .selectAll("selectionZone")
+        .data((d) => d)
+        .join("rect")
+            .attr("x", (d) => xScale(d.data.group))
+            .attr("y", 0)
+            .attr("width",xScale.bandwidth() + 10)
+            .attr("height",height + 20)
+            .on("mouseenter", function (_ignore, d) {
+                chart.selectAll(`.subbar-${type}`)
+                    .filter((e) => e.data.group !== d.data.group)
+                        .transition(`subbar${type}`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 0.2);
+                chart.selectAll(`.label-${type}`)
+                    .filter((e) => e !== (d.data.group))
+                        .transition(`label${type}opacity`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 0.2);
+                chart.selectAll(`.label-${type}`)
+                    .filter((e) => e === (d.data.group))
+                        .transition(`label${type}size`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .style("font-size", "16px");
+
+                hint
+                    .transition("hint")
+                    .duration(selectTransitTime)
+                    .style("opacity", 0);
+                
+                chart.append("text")             
+                    .attr("transform", `translate(${width + margin.right/2}, 0)`)
+                    .attr("class", "legendTitle")
+                    .style("text-anchor", "middle")
+                    .style("opacity", 0)
+                    .text(d.data.group)
+                    .transition("legendTitle")
+                    .duration(selectTransitTime/2)
+                        .style("opacity", 1);
+            })
+            .on("mouseleave", function (_ignore, d) {
+                chart.selectAll(`.subbar-${type}`)
+                    .filter((e) => e.data.group !== d.data.group)
                     .transition(`subbar${type}`)
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
-                        .attr("opacity", 0.2);
-            chart.selectAll(`.label-${type}`)
-                .filter((e) => e !== (d.data.group))
-                    .transition(`label${type}opacity`)
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
-                        .attr("opacity", 0.2);
-            chart.selectAll(`.label-${type}`)
-                .filter((e) => e === (d.data.group))
-                    .transition(`label${type}size`)
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
-                        .style("font-size", "16px");
-            d3.select('#by-country-view-details-content-tooltip-title').html(d.data.group);
-            
-            for (const [key, val] of Object.entries(d.data)) {
-                if (key === "group") {
-                    continue
-                }
-                d3.select('#by-country-view-details-content-tooltip-content').append("p").text(`${key} ${val}`);
-            };
-        })
-        .on("mouseleave", function (_ignore, d) {
-            chart.selectAll(`.subbar-${type}`)
-                .filter((e) => e.data.group !== d.data.group)
-                .transition(`subbar${type}`)
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .attr("opacity", 1);
-            chart.selectAll(`.label-${type}`)
-                .filter((e) => e !== (d.data.group))
-                    .transition(`label${type}opacity`)
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
                         .attr("opacity", 1);
-            chart.selectAll(`.label-${type}`)
-                .filter((e) => e === (d.data.group))
-                    .transition(`label${type}size`)
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
-                        .style("font-size", "12px");
+                chart.selectAll(`.label-${type}`)
+                    .filter((e) => e !== (d.data.group))
+                        .transition(`label${type}opacity`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 1);
+                chart.selectAll(`.label-${type}`)
+                    .filter((e) => e === (d.data.group))
+                        .transition(`label${type}size`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .style("font-size", "12px");
 
-            d3.select('#by-country-view-details-content-tooltip-title').html("");
-            d3.select('#by-country-view-details-content-tooltip-content').html("");
-        });
+                hint
+                    .transition("hint")
+                    .duration(selectTransitTime)
+                    .style("opacity", 1);
+
+                chart.selectAll(".legendTitle")
+                    .transition("legendTitle")
+                    .duration(selectTransitTime/2)
+                        .style("opacity", 0)
+                    .delay(selectTransitTime/2)
+                        .remove();
+            });
 
     // Setup color scale for vaccine period highlights
     const labelBGColor = d3.scaleOrdinal()
