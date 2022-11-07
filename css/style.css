@@ -308,19 +308,25 @@ svg {
     overflow-y: auto;
 }
 
-#by-country-view-tooltip {
+#by-country-view-infobox {
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     width: 300px;
     height: 50px;
 
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
+
+    transition: 0.3s;
 }
 
-#by-country-view-tooltip-instruction{
+#by-country-view-infobox.infobox-active {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+#by-country-view-infobox-instruction{
     grid-row-start: 1;
     grid-column-start: 1;
 
@@ -333,7 +339,7 @@ svg {
     transition: 0.3s;
 }
 
-#by-country-view-tooltip-display {
+#by-country-view-infobox-display {
     grid-row-start: 1;
     grid-column-start: 1;
 
@@ -346,12 +352,12 @@ svg {
     transition: 0.3s;
 }
 
-#by-country-view-tooltip-value {
+#by-country-view-infobox-value {
     font-weight: bold;
     font-size: 1.3em;
 }
 
-#by-country-view-tooltip-prompt {
+#by-country-view-infobox-prompt {
     color: #D3D3D3;
 }
 

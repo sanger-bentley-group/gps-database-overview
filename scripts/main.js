@@ -12,6 +12,7 @@ function navInit() {
     const byCountryViewDetails = document.querySelector("#by-country-view-details");
     const backToMapLink = document.querySelector("#back-to-map-link");
 
+    // For Summary Button: On click, go to summary view
     summaryViewButton.addEventListener("click", function () {
         summaryView.classList.remove("hidden");
         summaryViewButton.classList.add("nav-button-active");
@@ -20,6 +21,7 @@ function navInit() {
         byCountryViewDetails.classList.add("hidden");
     });
 
+    // For By Country Button and Back to Map button: On click, go to map view
     [byCountryViewButton, backToMapLink].forEach(function (elem) {
         elem.addEventListener("click",function () {
             byCountryView.classList.remove("hidden");
@@ -37,6 +39,7 @@ function filterInit() {
     const countryListSearch = document.querySelector("#country-list-search");
     const countryList = document.querySelector("#country-list");
 
+    // Filter the list after every key entry
     countryListSearch.addEventListener("keyup", function () {
         const filterValue = countryListSearch.value.toUpperCase();
         const countryListItems = countryList.querySelectorAll("li");
@@ -68,7 +71,7 @@ async function buildContent() {
 }
 
 
-// Get data.json, alpha2.json and ensure map is loaded
+// Get data.json, alpha2.json and ensure map is loaded. Return only when all are ready
 async function getData(dataPath, alpha2Path, mapObject) {
     const [dataResp, alpha2Resp, _ignore] = await Promise.allSettled([
         fetch(dataPath).then((res) => res.json()),
@@ -81,25 +84,31 @@ async function getData(dataPath, alpha2Path, mapObject) {
 
 // Build Summary View left panel
 function buildSummaryLeft(data) {
+    // Show total sample count
     const totalSampleCount = Object.values(data.summary.country).reduce((a, b) => a + b);
     document.querySelector("#total-sample-count").innerHTML = totalSampleCount;
 
+    // Show total countries/regions count except unknown
     const totalCountryCount = Object.keys(data.summary.country).filter((e) => e !== "NaN").length;
     document.querySelector("#total-country-count").innerHTML = totalCountryCount;
 
+    // Show minimum and maximum year of collection of samples
     const totalYearValues = Object.keys(data.summary.year_of_collection).filter((e) => e !== "NaN");
     const totalYearValuesMin = Math.min(...totalYearValues);
     const totalYearValuesMax = Math.max(...totalYearValues);
     document.querySelector("#total-year-low-value").innerHTML = `${totalYearValuesMin}`;
     document.querySelector("#total-year-high-value").innerHTML = `${totalYearValuesMax}`;
 
+    // Run count up animation for all values in this panel
     document.querySelectorAll('.countup').forEach(animateCountUp);
 }
 
 
 // Build Summary View right panel
 function buildSummaryRight(data) {
+    // Build donut charts for upper row
     ["country", "vaccine_period", "manifestation"].forEach((group) => buildDonutChart(data.summary[group], group));
+    // Build bar charts for lower row
     ["year_of_collection", "age"].forEach((group) => buildBarChart(data.summary[group], group));
 }
 
@@ -136,9 +145,10 @@ function buildByCountryList(data, alpha2) {
 // Enable By Country View interactivity
 function byCountryInit(data, map, alpha2) {
     const countries = Object.keys(data.country);
-    const countryTooltipInstruction = document.querySelector("#by-country-view-tooltip-instruction");
-    const countryTooltipDisplay = document.querySelector("#by-country-view-tooltip-display");
-    const countryTooltipValue = document.querySelector("#by-country-view-tooltip-value");
+    const countryInfobox = document.querySelector("#by-country-view-infobox");
+    const countryInfoboxInstruction = document.querySelector("#by-country-view-infobox-instruction");
+    const countryInfoboxDisplay = document.querySelector("#by-country-view-infobox-display");
+    const countryInfoboxValue = document.querySelector("#by-country-view-infobox-value");
     const byCountryView = document.querySelector("#by-country-view");
     const byCountryViewDetails = document.querySelector("#by-country-view-details");
 
@@ -148,28 +158,30 @@ function byCountryInit(data, map, alpha2) {
         const countryLabel = map.querySelector(`#${country}-label`);
         const countryListItem = document.querySelector(`#${country}-li`);
 
-        // Highlight country and show tooltip when mouseover from map element or list element
+        // Highlight country, change infobox to show value and hide instruction when mouseover from map element or list element
         [countryGroup, countryListItem].forEach(function (elem) {
             elem.addEventListener("mouseover", function () {
                 countryGroup.classList.add("country-active");
                 countryLabel.classList.add("country-label-available");
-                countryTooltipValue.innerHTML = `${Number(data.country[country].total).toLocaleString()} Samples`;
-                countryTooltipInstruction.classList.add("hidden");
-                countryTooltipDisplay.classList.remove("hidden");
+                countryInfobox.classList.add("infobox-active");
+                countryInfoboxValue.innerHTML = `${Number(data.country[country].total).toLocaleString()} Samples`;
+                countryInfoboxInstruction.classList.add("hidden");
+                countryInfoboxDisplay.classList.remove("hidden");
             });
         });
 
-        // Un-highlight country and hide tooltip when mouseout from map element or list element
+        // Un-highlight country, change infobox to hide value and show instruction when mouseout from map element or list element
         [countryGroup, countryListItem].forEach(function (elem) {
             elem.addEventListener("mouseout", function () {
                 countryGroup.classList.remove("country-active");
                 countryLabel.classList.remove("country-label-available");
-                countryTooltipInstruction.classList.remove("hidden");
-                countryTooltipDisplay.classList.add("hidden");
+                countryInfobox.classList.remove("infobox-active");
+                countryInfoboxInstruction.classList.remove("hidden");
+                countryInfoboxDisplay.classList.add("hidden");
             });
         });
 
-        // Enter details view when mouseclick from map element or list element
+        // Enter details view when mouseclick from map element or list element, and build content
         [countryGroup, countryListItem].forEach(function (elem) {
             elem.addEventListener("click", function (e) {
                 byCountryView.classList.add("hidden");
@@ -185,16 +197,19 @@ function byCountryInit(data, map, alpha2) {
 
 // Count up animation
 function animateCountUp(elem) {
-    // frame duration = 1000ms / fps
+    // Frame duration = 1000ms / fps
     const frameDuration = 1000 / 60;
-    // total frames = total duration / frame duration
+    // Total frames = total duration / frame duration
     const frames = Math.round(1000 / frameDuration);
-    const easeOut = t => t * (2 - t);
+    // Ease out function when approaching 1
+    const easeOut = (t) => t * (2 - t);
 
+    // Get target value
     let frame = 0;
     const countTo = parseInt(elem.innerHTML);
     
-    const counter = setInterval( function() {
+    // Count from 0 to target value with ease out
+    const counter = setInterval(function() {
         frame++;
         let currentCount = Math.round(countTo * easeOut(frame / frames));
 
@@ -212,7 +227,7 @@ function animateCountUp(elem) {
 }
 
 
-// Extract country alpha2 code from different elements
+// Extract country alpha2 code from different elements of map / country list
 function getAlpha2(elem) {
     if (elem.nodeName === "LI") {
         return elem.id.split("-")[0];
@@ -231,8 +246,10 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
     const byAgeButton = document.querySelector("#by-age-button");
     const byManifestationButton = document.querySelector("#by-manifestation-button");
 
+    // Set title
     byCountryViewTitle.innerHTML = alpha2[countryAlpha2];
 
+    // Build stacked chart by age or by manifestation based on active button
     const activeButton = document.querySelector(".country-button-active");
     if (activeButton === byAgeButton) {
         buildStackedChart(countryData, "age");
@@ -240,6 +257,7 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
         buildStackedChart(countryData, "manifestation");
     }
 
+    // Enable interactivity of By Age button
     byAgeButton.addEventListener("click", function() {
         byAgeButton.classList.add("country-button-active");
         byAgeButton.setAttribute("disabled", "");
@@ -247,6 +265,8 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
         byManifestationButton.removeAttribute("disabled");
         buildStackedChart(countryData, "age");
     });
+
+    // Enable interactivity of By Manifestation button
     byManifestationButton.addEventListener("click", function() {
         byAgeButton.classList.remove("country-button-active");
         byAgeButton.removeAttribute("disabled");
