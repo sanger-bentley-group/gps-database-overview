@@ -402,7 +402,7 @@ svg {
 #by-country-view-details-content {
     flex-grow: 1;
     align-self: stretch;
-    margin: 5vw;
+    margin: 0 5vw;
 
     display: flex;
     align-items: center;
