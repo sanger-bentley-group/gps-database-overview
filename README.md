@@ -12,7 +12,7 @@ Tested on:
 - Firefox 106
 - Chrome 107
   
-The website is browsable on Safari (last tested on 16.1), but performance issues and visual artefacts are expected. 
+The website is browsable on Safari (last tested on 16.1), but performance issues are expected. 
 
 &nbsp;
 ## Credits
