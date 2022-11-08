@@ -100,9 +100,8 @@ svg {
 
 .nav-button {
     height: 50px;
-    width: 150px;
     border: none;
-    padding: 0;
+    padding: 0 20px;
 
     background-color: #C7C7FF;
     color: white;
@@ -110,7 +109,7 @@ svg {
     font-size: 1.5em;
     font-weight: lighter;
 
-    transition-duration: 0.3s;
+    transition: background-color 0.3s;
 }
 
 .nav-button:not(.nav-button-active):hover {
@@ -279,7 +278,7 @@ svg {
 #by-country-view-list ul li {
     padding: 10px;
     border-radius: 10px;
-    transition-duration: 0.3s;
+    transition: 0.3s;
 }
 
 #by-country-view-list ul li:hover {
@@ -425,7 +424,7 @@ svg {
     font-size: 1.2em;
     font-weight: lighter;
 
-    transition-duration: 0.3s;
+    transition: background-color 0.3s;
 }
 
 .country-button:first-of-type{
