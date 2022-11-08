@@ -1,4 +1,4 @@
-// Selection Transition Time for All Charts
+// Selection Animation Transition Time for All Charts
 const selectTransitTime = 100;
 
 
@@ -16,6 +16,7 @@ function buildDonutChart(data, group) {
     for (const key in data) {
         // Comment out below line to include unknown data
         if (key === "NaN") { continue; }
+
         dataArr.push({ key: key !== "NaN" ? key : "Unknown" , value: data[key] });
     }
 
@@ -47,44 +48,54 @@ function buildDonutChart(data, group) {
     // Interpolate from start angle to end angle of the pieGenerator
     const angleInterpolate = d3.interpolate(pieGenerator.startAngle()(), pieGenerator.endAngle()());
 
-    // Draw arcs with load animations
+    // Draw arcs with start-up animations
     chart.selectAll("path")
     .data(arcData)
     .join("path")
         .attr("fill", (d) => color(d.data.key))
         .attr("stroke", "white")
         .style("stroke-width", "1px")
+        // Setup mouse enter event trigger
         .on("mouseenter", function (_ignore, d) {
+            // Lower opacity of non-target arcs
             chart.selectAll("path")
                 .filter((e) => d.data.key !== e.data.key)
-                .transition("arc")
+                .transition(`${group}-arc`)
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
                     .attr("opacity", 0.2);
+            // Show hidden key and value texts
             chart.selectAll(`.${group}-${d.data.key.replace(/[\W]+/g,"_")}`)
-            .transition("text")
-            .duration(selectTransitTime)
-            .ease(d3.easeLinear)
-                .attr("opacity", 1);
+                .transition(`${group}-text`)
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
+                    .attr("opacity", 1);
         })
+        // Setup mouse leave event trigger
         .on("mouseleave", function (_ignore, d) {
+            // Restore opacity of non-target arcs
             chart.selectAll("path")
-            .filter((e) => d.data.key !== e.data.key)
-            .transition("arc")
-            .duration(selectTransitTime)
-            .ease(d3.easeLinear)
-                .attr("opacity", 1);
+                .filter((e) => d.data.key !== e.data.key)
+                .transition(`${group}-arc`)
+                .delay(30) // Prevent flashing
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
+                    .attr("opacity", 1);
+            // Hide key and value texts
             chart.selectAll(`.${group}-${d.data.key.replace(/[\W]+/g,"_")}`)
-            .transition("text")
-            .duration(selectTransitTime)
-            .ease(d3.easeLinear)
-                .attr("opacity", 0);
+                .transition(`${group}-text`)
+                .duration(selectTransitTime)
+                .ease(d3.easeLinear)
+                    .attr("opacity", 0);
         })
+        // Start-up animation 
         .transition("arcBuilding")
         .ease(d3.easeCubicOut)
         .duration(1000)
             .attrTween("d", function(d) {
                 const endAngle = d.endAngle;
+                // Interpolate current angle thru whole pie
+                // Draw arc when > start angle, and stop expanding when > end angle
                 return function(t) {
                     let currentAngle = angleInterpolate(t);
                     if (currentAngle < d.startAngle) {
@@ -97,14 +108,14 @@ function buildDonutChart(data, group) {
     
     // Add hidden key texts
     chart.selectAll("key")
-        .data(arcData)
-        .join("text")
-            .text((d) => d.data.key)
-            .attr("transform", `translate(0 -${radius / 10})`)
-            .style("text-anchor", "middle")
-            .style("font-size", "36px")
-            .attr("opacity", 0)
-            .attr("class", (d) => `${group}-${d.data.key.replace(/[\W]+/g,"_")}`);
+    .data(arcData)
+    .join("text")
+        .text((d) => d.data.key)
+        .attr("transform", `translate(0 -${radius / 10})`)
+        .style("text-anchor", "middle")
+        .style("font-size", "36px")
+        .attr("opacity", 0)
+        .attr("class", (d) => `${group}-${d.data.key.replace(/[\W]+/g,"_")}`);
     
     // Add hidden value texts
     chart.selectAll("key")
@@ -128,9 +139,9 @@ function buildBarChart(data, group) {
     width = 800 - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
-
-    // For year of collection, build bars for the whole range and fill in missing ones
-    // For age, build bars according to ageBins
+    // Prepare data for d3.js consumption
+    // For year of collection, build bars for the whole range and fill in missing ones with 0
+    // For age, build bars according to provided bins
     let dataArr = [];
 
     if (group === "year_of_collection") {
@@ -155,7 +166,6 @@ function buildBarChart(data, group) {
         }
     }
 
-
     // Select svg container
     const svgContainer = d3.select(container);
 
@@ -173,9 +183,9 @@ function buildBarChart(data, group) {
         .domain(dataArr.map((d) => d.key))
         .padding(0.1);
     
-    // Setup Y-axis linear scale, the upper limit is round up to closest 1000s
+    // Setup Y-axis linear scale, the upper limit is rounded up
     const yScale = d3.scaleLinear()
-        .domain([0, Math.ceil(Math.max(...Object.values(data))/1000) * 1000])
+        .domain([0, roundUp(Math.max(...Object.values(data)))])
         .range([height, 0]);
 
     // Add X-axis and labels, replace "gt" to ">" in labels
@@ -186,7 +196,7 @@ function buildBarChart(data, group) {
             .style("font-size", "16px")
             .style("text-anchor", "end")
             .attr("transform", "translate(-10,0)rotate(-45)")
-            .attr("class", `label-${group} text-${group}`);
+            .attr("class", `label-${group}`);
 
     // Add data-specific class for X-axis labels, replace "&gt;" to "gt" in class name
     document.querySelectorAll(`.label-${group}`).forEach(function(textNode) {
@@ -201,7 +211,7 @@ function buildBarChart(data, group) {
 
     // Change Y-axis grid line opacity
     chart.selectAll(".tick line")
-    .attr("opacity", 0.5);
+        .attr("opacity", 0.5);
 
     // Remove domain lines 
     chart.selectAll(".domain").remove();
@@ -213,8 +223,9 @@ function buildBarChart(data, group) {
         .attr("x", (d) => xScale(d.key))
         .attr("width", xScale.bandwidth())
         .attr("fill", "#633AB5")
-        .attr("class", (d) => `bar-${group} ${group}-${d.key}`)
-        .transition("growBar")
+        .attr("class", `bar-${group}`)
+        // Grow individual bar from 0 height in 300 ms, delay start evenly to start all within 1000 ms
+        .transition(`${group}-growbar`)
         .delay((_ignore,i) => i*1000/dataArr.length)
         .ease(d3.easeCubicOut)
         .duration(300)
@@ -241,7 +252,7 @@ function buildBarChart(data, group) {
         .attr("x", (d) => xScale(d.key) + xScale.bandwidth() / 2)
         .attr("y", (d) => yScale(d.value) - 15)
         .attr("opacity", 0)
-        .attr("class", (d) => `value-${group} text-${group} ${group}-${d.key}`);
+        .attr("class", `value-${group}`);
     
     // Add selection zones for the whole height. Add interactivity and animations to the zones
     chart.selectAll("selectionZone")
@@ -249,43 +260,72 @@ function buildBarChart(data, group) {
     .join("rect")
         .attr("x", (d) => xScale(d.key))
         .attr("y", 0)
-        .attr("width", xScale.bandwidth() + xScale.padding() * xScale.step() * 2)
+        .attr("width", xScale.bandwidth() + xScale.padding() * xScale.step() * 2) // Extra width to fill the gap
         .attr("height", height + margin.bottom)
         .attr("opacity", 0)
+        // Setup mouse enter event trigger
         .on("mouseenter", function (_ignore, d) {
-            chart.selectAll(`.bar-${group},.label-${group}`)
+            // Fade all non-selected bars
+            chart.selectAll(`.bar-${group}`)
                 .filter((e) => e.key !== d.key)
-                    .transition("barLabel")
+                    .transition(`${group}-bar`)
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
                         .attr("opacity", 0.2);
-            chart.selectAll(`.${group}-${d.key}`)
-                .filter(`.text-${group}`)
-                .transition("text")
+            // Show hidden value of the selected column
+            chart.selectAll(`.value-${group}`)
+                .filter((e) => e.key === d.key)
+                    .transition(`${group}-value`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 1)
+                        .style("font-size", "24px");
+            // Highlight label of the selected column
+            chart.selectAll(`.label-${group}.${group}-${d.key}`)
+                .transition(`${group}-label-highlight`)
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
-                    .attr("opacity", 1)
                     .style("font-size", "24px");
-        })
-        .on("mouseleave", function (_ignore, d) {
-            chart.selectAll(`.bar-${group},.label-${group}`)
-                .filter((e) => e.key !== d.key)
-                .transition("barLabel")
+            // Fade labels of all non-selected columns
+            chart.selectAll(`.label-${group}:not(.${group}-${d.key})`)
+                .transition(`${group}-label-fade`)
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
-                    .attr("opacity", 1);
-            chart.selectAll(`.${group}-${d.key}`)
-                .filter(`.text-${group}`)
-                .transition("text")
+                    .style('opacity', 0.2);
+        })
+        // Setup mouse leave event trigger
+        .on("mouseleave", function (_ignore, d) {
+            // Unfade all non-selected bars
+            chart.selectAll(`.bar-${group}`)
+                .filter((e) => e.key !== d.key)
+                    .transition(`${group}-bar`)
+                    .delay(30) // Prevent flashing
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 1);
+            // Hide hidden value of the selected column
+            chart.selectAll(`.value-${group}`)
+                .filter((e) => e.key === d.key)
+                    .transition(`${group}-value`)
+                    .delay(30) // Prevent flashing
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0)
+                        .style("font-size", "16px");
+            // Unhighlight label of the selected column
+            chart.selectAll(`.label-${group}.${group}-${d.key}`)
+                .transition(`${group}-label-highlight`)
+                .delay(30) // Prevent flashing
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
                     .style("font-size", "16px");
-            chart.selectAll(`.${group}-${d.key}`)
-                .filter(`.value-${group}`)
-                .transition("value")
+            // Unfade labels of all non-selected columns
+            chart.selectAll(`.label-${group}:not(.${group}-${d.key})`)
+                .transition(`${group}-label-fade`)
+                .delay(30) // Prevent flashing
                 .duration(selectTransitTime)
                 .ease(d3.easeLinear)
-                    .attr("opacity", 0);
+                    .style('opacity', 1);
         });
 }
 
@@ -293,6 +333,7 @@ function buildBarChart(data, group) {
 function buildStackedChart(data, type) {
     const container = document.querySelector("#by-country-view-details-content-chart");
 
+    // Clear container
     container.innerHTML = "";
 
     // Set dimension of the chart
@@ -353,8 +394,8 @@ function buildStackedChart(data, type) {
         .domain(groupSet)
         .padding(0.1);
     
-    // Round up to nearest tens/hundreds/thousnds of the same magnitude, or at least 10
-    const maxSumUp = Math.max(Math.pow(10, Math.floor(Math.log10(maxSum))) * (Number(String(maxSum)[0]) + 1), 10);
+    // Round up max sum and at least 10
+    const maxSumUp = Math.max(roundUp(maxSum), 10);
 
     // Setup Y-axis linear scale
     const yScale = d3.scaleLinear()
@@ -643,4 +684,9 @@ function buildStackedChart(data, type) {
                 });
 
     }
+}
+
+// Round up to nearest tens/hundreds/thousnds of the same magnitude
+function roundUp(n) {
+    return Math.pow(10, Math.floor(Math.log10(n))) * (Number(String(n)[0]) + 1);
 }
