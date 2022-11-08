@@ -10,7 +10,7 @@ function buildDonutChart(data, group) {
     const diameter = 500;
     const radius = diameter / 2;
 
-    // Prepare data structure
+    // Prepare data for d3.js consumption
     let dataArr = [];
 
     for (const key in data) {
@@ -57,38 +57,40 @@ function buildDonutChart(data, group) {
         .style("stroke-width", "1px")
         // Setup mouse enter event trigger
         .on("mouseenter", function (_ignore, d) {
-            // Lower opacity of non-target arcs
+            // Show hidden key and value texts of selected arc
+            chart.selectAll(`.text-${group}`)
+                .filter((e) => e.data.key === d.data.key)
+                    .transition(`text-${group}`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 1);
+            // Fade all non-selected arcs
             chart.selectAll("path")
-                .filter((e) => d.data.key !== e.data.key)
-                .transition(`${group}-arc`)
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .attr("opacity", 0.2);
-            // Show hidden key and value texts
-            chart.selectAll(`.${group}-${d.data.key.replace(/[\W]+/g,"_")}`)
-                .transition(`${group}-text`)
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .attr("opacity", 1);
+                .filter((e) => e.data.key !== d.data.key)
+                    .transition(`arc-${group}`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0.2);
         })
         // Setup mouse leave event trigger
         .on("mouseleave", function (_ignore, d) {
-            // Restore opacity of non-target arcs
+            // Hide key and value texts of selected arc
+            chart.selectAll(`.text-${group}`)
+                .filter((e) => e.data.key === d.data.key)
+                    .transition(`text-${group}`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0);
+            // Unfade non-selected arcs
             chart.selectAll("path")
-                .filter((e) => d.data.key !== e.data.key)
-                .transition(`${group}-arc`)
-                .delay(30) // Prevent flashing
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .attr("opacity", 1);
-            // Hide key and value texts
-            chart.selectAll(`.${group}-${d.data.key.replace(/[\W]+/g,"_")}`)
-                .transition(`${group}-text`)
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .attr("opacity", 0);
+                .filter((e) => e.data.key !== d.data.key)
+                    .transition(`arc-${group}`)
+                    .delay(30) // Prevent flashing
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 1);
         })
-        // Start-up animation 
+        // Draw arcs around a forming circle 
         .transition("arcBuilding")
         .ease(d3.easeCubicOut)
         .duration(1000)
@@ -115,7 +117,7 @@ function buildDonutChart(data, group) {
         .style("text-anchor", "middle")
         .style("font-size", "36px")
         .attr("opacity", 0)
-        .attr("class", (d) => `${group}-${d.data.key.replace(/[\W]+/g,"_")}`);
+        .attr("class", `text-${group}`);
     
     // Add hidden value texts
     chart.selectAll("key")
@@ -126,7 +128,7 @@ function buildDonutChart(data, group) {
         .style("text-anchor", "middle")
         .style("font-size", "48px")
         .attr("opacity", 0)
-        .attr("class", (d) => `${group}-${d.data.key.replace(/[\W]+/g,"_")}`);
+        .attr("class", `text-${group}`);
 }
 
 
@@ -140,10 +142,9 @@ function buildBarChart(data, group) {
     height = 400 - margin.top - margin.bottom;
 
     // Prepare data for d3.js consumption
-    // For year of collection, build bars for the whole range and fill in missing ones with 0
-    // For age, build bars according to provided bins
     let dataArr = [];
 
+    // For year of collection, build bars for the whole range and fill in missing ones with 0
     if (group === "year_of_collection") {
         const dataNums = Object.keys(data).filter((x) => !isNaN(x));
         const dataNumsMin = Math.min(...dataNums);
@@ -153,16 +154,16 @@ function buildBarChart(data, group) {
             dataArr.push({ key: i, value: data[i] ?? 0 });
         }
 
-        // Uncomment below to show unknown year of collection
-        // if (Object.keys(data).filter((x) => isNaN(x)).length) {
-        //     dataArr.push({ key: "Unknown", value: data["NaN"] });
-        // }
+        // Uncomment below line to show unknown year of collection
+        // if (Object.keys(data).filter((x) => isNaN(x)).length) { dataArr.push({ key: "Unknown", value: data.NaN }); }
+
+    // For age, build bars according to provided bins
     } else if (group === "age"){
         for (const [key, val] of Object.entries(data)) {
-            // Comment below to show unknown age
+            // Comment out below line to show unknown age
             if (key === "NaN") { continue; }
 
-            dataArr.push({ key: key.toString().replace(">", "gt"), value: val });
+            dataArr.push({ key: key, value: val });
         }
     }
 
@@ -188,20 +189,15 @@ function buildBarChart(data, group) {
         .domain([0, roundUp(Math.max(...Object.values(data)))])
         .range([height, 0]);
 
-    // Add X-axis and labels, replace "gt" to ">" in labels
+    // Add X-axis and labels
     chart.append("g")
         .attr("transform", `translate(0, ${height})`)
-        .call(d3.axisBottom(xScale).tickFormat((d) => d.toString().replace("gt", ">")))
+        .call(d3.axisBottom(xScale))
         .selectAll("text")
             .style("font-size", "16px")
             .style("text-anchor", "end")
             .attr("transform", "translate(-10,0)rotate(-45)")
             .attr("class", `label-${group}`);
-
-    // Add data-specific class for X-axis labels, replace "&gt;" to "gt" in class name
-    document.querySelectorAll(`.label-${group}`).forEach(function(textNode) {
-        textNode.classList.add(`${group}-${textNode.innerHTML.replace("&gt;", "gt")}`);
-    });
 
     // Add Y-axis grid lines and labels
     chart.append("g")
@@ -224,7 +220,7 @@ function buildBarChart(data, group) {
         .attr("width", xScale.bandwidth())
         .attr("fill", "#633AB5")
         .attr("class", `bar-${group}`)
-        // Grow individual bar from 0 height in 300 ms, delay start evenly to start all within 1000 ms
+        // Grow individual bars from 0 height in 300 ms, delay start to progress from left to right across 1000 ms
         .transition(`${group}-growbar`)
         .delay((_ignore,i) => i*1000/dataArr.length)
         .ease(d3.easeCubicOut)
@@ -265,67 +261,71 @@ function buildBarChart(data, group) {
         .attr("opacity", 0)
         // Setup mouse enter event trigger
         .on("mouseenter", function (_ignore, d) {
-            // Fade all non-selected bars
-            chart.selectAll(`.bar-${group}`)
-                .filter((e) => e.key !== d.key)
-                    .transition(`${group}-bar`)
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
-                        .attr("opacity", 0.2);
             // Show hidden value of the selected column
             chart.selectAll(`.value-${group}`)
                 .filter((e) => e.key === d.key)
-                    .transition(`${group}-value`)
+                    .transition(`value-${group}`)
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
                         .attr("opacity", 1)
                         .style("font-size", "24px");
             // Highlight label of the selected column
-            chart.selectAll(`.label-${group}.${group}-${d.key}`)
-                .transition(`${group}-label-highlight`)
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .style("font-size", "24px");
+            chart.selectAll(`.label-${group}`)
+                .filter((e) => e === d.key)
+                    .transition(`label-${group}-highlight`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .style("font-size", "24px");
+            // Fade all non-selected bars
+            chart.selectAll(`.bar-${group}`)
+                .filter((e) => e.key !== d.key)
+                    .transition(`bar-${group}`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 0.2);
             // Fade labels of all non-selected columns
-            chart.selectAll(`.label-${group}:not(.${group}-${d.key})`)
-                .transition(`${group}-label-fade`)
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .style('opacity', 0.2);
+            chart.selectAll(`.label-${group}`)
+                .filter((e) => e !== d.key)
+                    .transition(`label-${group}-fade`)
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .style('opacity', 0.2);
         })
         // Setup mouse leave event trigger
         .on("mouseleave", function (_ignore, d) {
-            // Unfade all non-selected bars
-            chart.selectAll(`.bar-${group}`)
-                .filter((e) => e.key !== d.key)
-                    .transition(`${group}-bar`)
-                    .delay(30) // Prevent flashing
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
-                        .attr("opacity", 1);
             // Hide hidden value of the selected column
             chart.selectAll(`.value-${group}`)
                 .filter((e) => e.key === d.key)
-                    .transition(`${group}-value`)
+                    .transition(`value-${group}`)
                     .delay(30) // Prevent flashing
                     .duration(selectTransitTime)
                     .ease(d3.easeLinear)
                         .attr("opacity", 0)
                         .style("font-size", "16px");
             // Unhighlight label of the selected column
-            chart.selectAll(`.label-${group}.${group}-${d.key}`)
-                .transition(`${group}-label-highlight`)
-                .delay(30) // Prevent flashing
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .style("font-size", "16px");
+            chart.selectAll(`.label-${group}`)
+                .filter((e) => e === d.key)
+                    .transition(`label-${group}-highlight`)
+                    .delay(30) // Prevent flashing
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .style("font-size", "16px");
+            // Unfade all non-selected bars
+            chart.selectAll(`.bar-${group}`)
+                .filter((e) => e.key !== d.key)
+                    .transition(`bar-${group}`)
+                    .delay(30) // Prevent flashing
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .attr("opacity", 1);
             // Unfade labels of all non-selected columns
-            chart.selectAll(`.label-${group}:not(.${group}-${d.key})`)
-                .transition(`${group}-label-fade`)
-                .delay(30) // Prevent flashing
-                .duration(selectTransitTime)
-                .ease(d3.easeLinear)
-                    .style('opacity', 1);
+            chart.selectAll(`.label-${group}`)
+                .filter((e) => e !== d.key)
+                    .transition(`label-${group}-fade`)
+                    .delay(30) // Prevent flashing
+                    .duration(selectTransitTime)
+                    .ease(d3.easeLinear)
+                        .style('opacity', 1);
         });
 }
 
@@ -355,11 +355,17 @@ function buildStackedChart(data, type) {
     // Setup color scale
     const color = d3.scaleOrdinal(d3.schemeTableau10);
 
+    // Save all collection years
     let groupSet = new Set();
+    // Save all data key
     let keySet = new Set();
 
+    // Prepare data for d3.js consumption
     let dataArr = [];
+    // Save max sum of values among all collection years
     let maxSum = 0;
+
+    // Loop through all collection years
     for (const [group, keys] of Object.entries(data[type])) {
         // Comment out below "if block" to include samples with unknown collection year
         if (group === "NaN") { continue; }
@@ -367,6 +373,7 @@ function buildStackedChart(data, type) {
         groupSet.add(group);
         let dataArrEle = {group: group};
         let curSum = 0;
+        // Loop through all data keys and values in that year
         for (let [key, val] of Object.entries(keys)) {
             if (key === "NaN") {
                 key = "Unknown";
@@ -379,7 +386,7 @@ function buildStackedChart(data, type) {
         maxSum = Math.max(maxSum, curSum);
     }
 
-    // Early termination for country without sample 
+    // Early termination for country without sample in the data prepared for d3.js 
     if (dataArr.length === 0) {
         chart.append("text")             
             .attr("transform", `translate(${width/2}, ${height/2})`)
@@ -409,11 +416,6 @@ function buildStackedChart(data, type) {
         .selectAll("text")
             .style("font-size", "12px")
             .attr("class", `label-${type}`);
-
-    // Add data-specific class for X-axis labels
-    document.querySelectorAll(`.label-${type}`).forEach(function(textNode) {
-        textNode.classList.add(`${type}-${textNode.innerHTML}`);
-    });
     
     // Add X-axis label
     chart.append("text")             
@@ -443,18 +445,21 @@ function buildStackedChart(data, type) {
     // Pass dataArr into Stack Generator
     let stackData = stackGenerator(dataArr);
 
-    // Draw bars
+    // Draw bars with start-up animations
     chart.append("g")
         .selectAll("g")
+        // Loop through data key
         .data(stackData)
         .join("g")
             .attr("fill", (d) => color(d.key))
         .selectAll("rect")
+        // Loop through collection years
         .data((d) => d)
         .join("rect")
             .attr("x", (d) => xScale(d.data.group))
             .attr("width",xScale.bandwidth())
             .attr("class", `subbar-${type}`)
+            // Grow individual subbars from 0 height in 300 ms, delay start to progress from left to right across 1000 ms
             .transition("growStackBar")
             .delay((_ignore,i) => i*1000/dataArr.length)
             .ease(d3.easeCubicOut)
@@ -475,155 +480,174 @@ function buildStackedChart(data, type) {
     // Add selection zones for the whole height. Add interactivity and animations to the zones
     chart.append("g")
         .selectAll("g")
+        // Loop through data key
         .data(stackData)
         .join("g")
             .attr("opacity", 0)
         .selectAll("selectionZone")
+        // Loop through collection years
         .data((d) => d)
         .join("rect")
             .attr("x", (d) => xScale(d.data.group))
             .attr("y", 0)
-            .attr("width", xScale.bandwidth() + xScale.padding() * xScale.step() * 2)
+            .attr("width", xScale.bandwidth() + xScale.padding() * xScale.step() * 2) // Extra width to fill the gap
             .attr("height", height + 20)
+            // Setup mouse enter event trigger
             .on("mouseenter", function (_ignore, d) {
-                chart.selectAll(`.subbar-${type}`)
-                    .filter((e) => e.data.group !== d.data.group)
-                        .transition(`subbar${type}`)
-                        .duration(selectTransitTime)
-                        .ease(d3.easeLinear)
-                            .attr("opacity", 0.2);
+                // Highlight label of the selected column
                 chart.selectAll(`.label-${type}`)
-                    .filter((e) => e !== (d.data.group))
-                        .transition(`label${type}opacity`)
-                        .duration(selectTransitTime)
-                        .ease(d3.easeLinear)
-                            .attr("opacity", 0.2);
-                chart.selectAll(`.label-${type}`)
-                    .filter((e) => e === (d.data.group))
-                        .transition(`label${type}size`)
+                    .filter((e) => e === d.data.group)
+                        .transition(`label-${type}-font`)
                         .duration(selectTransitTime)
                         .ease(d3.easeLinear)
                             .style("font-size", "16px");
-
+                // Fade all non-selected bars
+                chart.selectAll(`.subbar-${type}`)
+                    .filter((e) => e.data.group !== d.data.group)
+                        .transition(`subbar-${type}`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 0.2);
+                // Fade label of non-selected columns
+                chart.selectAll(`.label-${type}`)
+                    .filter((e) => e !== d.data.group)
+                        .transition(`label-${type}-opacity`)
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 0.2);
+                // Fade hint at legend
                 hint
                     .transition("hint")
                     .duration(selectTransitTime)
                     .style("opacity", 0);
                 
+                // Insert year of collection to legend and fade in
                 chart.append("text")             
                     .attr("transform", `translate(${width + margin.right/2}, 0)`)
-                    .attr("class", "legend")
+                    .attr("class", `legend-${type}`)
                     .style("text-anchor", "middle")
                     .style("opacity", 0)
                     .text(d.data.group)
-                    .transition("legend")
+                    .transition(`legend-${type}`)
                     .duration(selectTransitTime)
                         .style("opacity", 1);
 
+                // Count keys with non-zero value
                 let i = 0;
-                for (const key of Object.keys(d.data).reverse()) {
-                    const val = d.data[key];
+                // Reverse order to match stacked bar arrangement
+                for (const [key, val] of Object.entries(d.data).reverse()) {
+                    // Skip year of collection key and keys with 0 value
                     if (key === "group" | val === 0) { continue; }
                     
+                    // i only progress when legend is added
+                    i += 1;
+
+                    // Insert colored circle to legend
                     chart.append("circle")
                         .attr("r", 5)
                         .attr("cx", width + 20)
                         .attr("cy", i * 20 + 20)
                         .attr("fill", color(key))
-                        .attr("class", "legend")
+                        .attr("class", `legend-${type}`)
                         .style("opacity", 0)
-                        .transition("legend")
+                        .transition(`legend-${type}`)
                         .duration(selectTransitTime)
                             .style("opacity", 1);
-                    
+                    // Insert key to legend
                     chart.append("text")
                         .attr("transform", `translate(${width + 40}, ${i * 20 + 25})`)
-                        .attr("class", "legend")
+                        .attr("class", `legend-${type}`)
                         .style("opacity", 0)
                         .style("font-size", "14px")
                         .text(key)
-                        .transition("legend")
+                        .transition(`legend-${type}`)
                         .duration(selectTransitTime)
                             .style("opacity", 1);
-                    
+                    // Insert value to legend
                     chart.append("text")
                         .attr("transform", `translate(${width + margin.right}, ${i * 20 + 25})`)
-                        .attr("class", "legend")
+                        .attr("class", `legend-${type}`)
                         .style("opacity", 0)
                         .style("text-anchor", "end")
                         .style("font-size", "14px")
                         .text(val.toLocaleString())
-                        .transition("legend")
+                        .transition(`legend-${type}`)
                         .duration(selectTransitTime)
                             .style("opacity", 1);
-
-                    i += 1;
                 }
-                
+                // If no legend is inserted, insert "No samples"
                 if (i == 0) {
                     chart.append("text")
                         .attr("transform", `translate(${width + margin.right/2}, 25)`)
-                        .attr("class", "legend")
+                        .attr("class", `legend-${type}`)
                         .style("text-anchor", "middle")
                         .style("opacity", 0)
                         .style("font-size", "14px")
                         .text("No samples")
-                        .transition("legend")
+                        .transition(`legend-${type}`)
                         .duration(selectTransitTime)
                             .style("opacity", 1);
                 }
             })
+            // Setup mouse leave event trigger
             .on("mouseleave", function (_ignore, d) {
-                chart.selectAll(`.subbar-${type}`)
-                    .filter((e) => e.data.group !== d.data.group)
-                    .transition(`subbar${type}`)
-                    .duration(selectTransitTime)
-                    .ease(d3.easeLinear)
-                        .attr("opacity", 1);
-                chart.selectAll(`.label-${type}`)
-                    .filter((e) => e !== (d.data.group))
-                        .transition(`label${type}opacity`)
-                        .duration(selectTransitTime)
-                        .ease(d3.easeLinear)
-                            .attr("opacity", 1);
+                // Unhighlight label of the selected column
                 chart.selectAll(`.label-${type}`)
                     .filter((e) => e === (d.data.group))
-                        .transition(`label${type}size`)
+                        .transition(`label-${type}-font`)
+                        .delay(30) // Prevent flashing
                         .duration(selectTransitTime)
                         .ease(d3.easeLinear)
                             .style("font-size", "12px");
-
+                // Unfade all non-selected bars
+                chart.selectAll(`.subbar-${type}`)
+                    .filter((e) => e.data.group !== d.data.group)
+                        .transition(`subbar-${type}`)
+                        .delay(30) // Prevent flashing
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 1);
+                // Unfade label of non-selected columns
+                chart.selectAll(`.label-${type}`)
+                    .filter((e) => e !== (d.data.group))
+                        .transition(`label-${type}-opacity`)
+                        .delay(30) // Prevent flashing
+                        .duration(selectTransitTime)
+                        .ease(d3.easeLinear)
+                            .attr("opacity", 1);
+                // Unfade hint at legend
                 hint
                     .transition("hint")
                     .duration(selectTransitTime)
                         .style("opacity", 1);
-
-                chart.selectAll(".legend")
-                    .transition("legend")
+                // Fade out legends and remove
+                chart.selectAll(`.legend-${type}`)
+                    .transition(`legend-${type}`)
                     .duration(selectTransitTime)
                         .style("opacity", 0)
                         .remove();
             });
 
     // Setup color scale for vaccine period highlights
-    const labelBGColor = d3.scaleOrdinal()
+    const vaccineColor = d3.scaleOrdinal()
         .domain(["Pre-PCV", "Post-PCV7", "Post-PCV10", "Post-PCV13"])
         .range(d3.schemeSet3);
 
-    // Add vaccine period labels and separators
+    // Add vaccine period labels, highlights and separators
     for (const [i, [range, period]] of Object.entries(data.vaccine_period).entries()) {
         const rangeArr = range.split(",");
 
         // Interpolate from left to right of chart
         const lineInterpolate = d3.interpolate(0, width);
 
-        // Add vaccine period
+        // Add vaccine period labels with start-up animation
         chart.append("text")
             .text(period)
             .style("font-size", "12px")
             .style("text-anchor", "start")
             .attr("transform", `translate(${xScale(rangeArr[0]) + 5},-15)rotate(-20)`)
-            .transition("showPeriodLabel")
+            // Fade in when vaccine period highlights approch the position
+            .transition(`periodLabel-${type}`)
             .duration(1000)
                 .attrTween("opacity", function() {
                     return function(t) {
@@ -636,15 +660,16 @@ function buildStackedChart(data, type) {
                     };
                 });
 
-        // Add vaccine period highlight
+        // Add vaccine period highlights with start-up animations
         chart.append("line")
             .attr("x1", xScale(rangeArr[0]))
             .attr("y1", -10)
             .attr("x2", xScale(rangeArr[1]) + xScale.bandwidth())
             .attr("y2", -10)
             .style("stroke-width", 3)
-            .style("stroke", labelBGColor(period))
-            .transition("growPeriodLine")
+            .style("stroke", vaccineColor(period))
+            // Draw lines from left to right
+            .transition(`periodLine-${type}`)
             .duration(1000)
                 .attrTween("x2", function() {
                     return function(t) {
@@ -660,7 +685,7 @@ function buildStackedChart(data, type) {
         // Skip adding separator if this is the last period
         if (i === Object.keys(data.vaccine_period).length - 1) { continue; }
         
-        // Add separator at the end of period
+        // Add separator at the end of each period with start-up animations
         const paddingSize = xScale.padding() * xScale.step();
         chart.append("line")
             .attr("x1", xScale(rangeArr[1]) + xScale.bandwidth() + paddingSize / 2)
@@ -670,6 +695,7 @@ function buildStackedChart(data, type) {
             .style("stroke-width", 1)
             .style("stroke-dasharray", ("3,3"))
             .style("stroke", "black")
+            // Fade in when vaccine period highlights approch the position
             .transition("showPeriodSeparator")
             .duration(1000)
                 .attrTween("opacity", function() {
