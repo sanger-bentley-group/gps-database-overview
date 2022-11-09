@@ -22,6 +22,10 @@ This project uses Open Source components. You can find the source code of their 
 - Copyright 2010-2022 Mike Bostock
 - License (ISC): https://github.com/d3/d3/blob/main/LICENSE
 
+[**loading.io css spinner**](https://loading.io/css/)
+- No Rights Reserved
+- License (CC0): https://github.com/loadingio/css-spinner
+
 [**SVG World Map JS**](https://github.com/raphaellepuschitz/SVG-World-Map)
 - Copyright (c) Raphael Lepuschitz
 - License (MIT): https://github.com/raphaellepuschitz/SVG-World-Map/blob/master/LICENSE.md
