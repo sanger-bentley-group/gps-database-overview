@@ -76,7 +76,7 @@ async function getData(dataPath, alpha2Path, mapObject) {
     const [dataResp, alpha2Resp, _ignore] = await Promise.allSettled([
         fetch(dataPath).then((res) => res.json()),
         fetch(alpha2Path).then((res) => res.json()),
-        new Promise ((resolve) => mapObject.addEventListener("load", resolve))
+        new Promise ((resolve) => window.addEventListener("load", resolve)) // Detect whole page is loaded is more reliable than mapObject
     ]);
     return [dataResp.value, alpha2Resp.value, mapObject.contentDocument];
 }
