@@ -59,9 +59,13 @@ function filterInit() {
 // Build content based on data
 async function buildContent() {
     const mapObject = document.querySelector("#world-map");
+    const loadingOverlay = document.querySelector("#loading-overlay");
 
     // Await for data.json, alpha2.json and map loaded before proceeding
     const [data, alpha2, map] = await getData("data/data.json", "data/alpha2.json", mapObject);
+
+    // Remove loading overlay once all files are loaded
+    loadingOverlay.classList.add('hidden');
 
     buildSummaryLeft(data);
     buildSummaryRight(data);
