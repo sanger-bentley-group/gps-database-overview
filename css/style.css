@@ -291,7 +291,7 @@ svg {
 }
 
 #country-list-search {
-    background-image: url('images/search_icon.svg');
+    background-image: url('../images/search_icon.svg');
     background-position: 10px 12px;
     background-size: 1em;
     background-repeat: no-repeat;
