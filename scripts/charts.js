@@ -578,7 +578,7 @@ function buildStackedChart(data, type) {
                 // If no legend is inserted, insert "No samples"
                 if (i == 0) {
                     chart.append("text")
-                        .attr("transform", `translate(${width + margin.right/2}, 25)`)
+                        .attr("transform", `translate(${width + margin.right/2}, 45)`)
                         .attr("class", `legend-${type}`)
                         .style("text-anchor", "middle")
                         .style("opacity", 0)
