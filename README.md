@@ -26,6 +26,10 @@ This project uses Open Source components. You can find the source code of their 
 - No Rights Reserved
 - License (CC0): https://github.com/loadingio/css-spinner
 
+[**Roboto Flex**](https://github.com/googlefonts/roboto-flex)
+- Copyright 2011 The Roboto Flex Project Authors
+- License (OFL): https://github.com/googlefonts/roboto-flex/blob/main/OFL.txt
+
 [**SVG World Map JS**](https://github.com/raphaellepuschitz/SVG-World-Map)
 - Copyright (c) Raphael Lepuschitz
 - License (MIT): https://github.com/raphaellepuschitz/SVG-World-Map/blob/master/LICENSE.md

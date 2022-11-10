@@ -1,13 +1,19 @@
 /* || GENERAL STYLES */
 
 * {
-    font-family:  Helvetica, Arial, sans-serif;
+    font-family:  "Roboto-flex", Helvetica, Arial, sans-serif;
 
     scrollbar-color: grey transparent;
     scrollbar-width: thin;
 
     cursor: default;
 }
+
+@font-face {
+    font-family: 'Roboto-flex';
+    src:  url('roboto_flex_latin.woff2') format('woff2');
+    font-weight: 100 1000;
+  }
 
 *::-webkit-scrollbar-track {
     background-color: transparent;
@@ -119,6 +125,7 @@ svg {
     height: 50px;
     border: none;
     padding: 0 20px;
+    margin: 0;
 
     background-color: #C7C7FF;
     color: white;
@@ -126,7 +133,7 @@ svg {
     font-size: 1.5em;
     font-weight: lighter;
 
-    transition: background-color 0.3s;
+    transition: 0.3s;
 }
 
 .nav-button:not(.nav-button-active):hover {
@@ -441,7 +448,7 @@ svg {
     font-size: 1.2em;
     font-weight: lighter;
 
-    transition: background-color 0.3s;
+    transition: 0.3s;
 }
 
 .country-button:first-of-type{
