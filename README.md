@@ -1,6 +1,6 @@
 # GPS Database Overview
 
-This website provides an visual overview of public data from [Global Pneumococcal Sequencing Project](https://www.pneumogen.net/gps/) (GPS) that is available via [Monocle](https://monocle.sanger.ac.uk/login).
+This website provides an visual overview of public data from [Global Pneumococcal Sequencing Project](https://www.pneumogen.net/gps/) (GPS) that is available via [Monocle](https://data.monocle.sanger.ac.uk/).
 
 &nbsp;
 ## About the Website
