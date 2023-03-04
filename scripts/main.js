@@ -61,28 +61,34 @@ async function buildContent() {
     const mapObject = document.querySelector("#world-map");
     const loadingOverlay = document.querySelector("#loading-overlay");
 
-    // Await for data.json, alpha2.json and map loaded before proceeding
-    const [data, alpha2, map] = await getData("data/data.json", "data/alpha2.json", mapObject);
+    // Detect whole page is loaded to represent map is loaded
+    // then await for data.json and alpha2.json before proceeding
+    window.addEventListener("load", () => {
+        getData("data/data.json", "data/alpha2.json")
+        .then( ([data, alpha2]) => {
+            const map = mapObject.contentDocument
 
-    // Remove loading overlay once all files are loaded
-    loadingOverlay.classList.add('hidden');
+            // Remove loading overlay once all files are loaded
+            loadingOverlay.classList.add('hidden');
+            
+            buildSummaryLeft(data);
+            buildSummaryRight(data);
+            buildByCountryMap(data, map);
+            buildByCountryList(data, alpha2);
+            byCountryInit(data, map, alpha2);
 
-    buildSummaryLeft(data);
-    buildSummaryRight(data);
-    buildByCountryMap(data, map);
-    buildByCountryList(data, alpha2);
-    byCountryInit(data, map, alpha2);
+        });
+    });
 }
 
 
-// Get data.json, alpha2.json and ensure map is loaded. Return only when all are ready
-async function getData(dataPath, alpha2Path, mapObject) {
-    const [dataResp, alpha2Resp, _ignore] = await Promise.allSettled([
-        fetch(dataPath).then((res) => res.json()),
-        fetch(alpha2Path).then((res) => res.json()),
-        new Promise ((resolve) => window.addEventListener("load", resolve)) // Detect whole page is loaded is more reliable than mapObject
-    ]);
-    return [dataResp.value, alpha2Resp.value, mapObject.contentDocument];
+// Return promise on both fetching of data.json and alpha2.json
+async function getData(dataPath, alpha2Path) {
+    return Promise.all(
+        [
+            fetch(dataPath).then((res) => res.json()),
+            fetch(alpha2Path).then((res) => res.json()),
+        ]);
 }
 
 
