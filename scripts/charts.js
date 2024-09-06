@@ -415,6 +415,7 @@ function buildStackedChart(data, type) {
         .call(d3.axisBottom(xScale).tickSizeOuter(0))
         .selectAll("text")
             .style("font-size", "12px")
+            .attr("transform", "translate(-10,10)rotate(-45)")
             .attr("class", `label-${type}`);
     
     // Add X-axis label
