@@ -1,6 +1,9 @@
 // Selection Animation Transition Time for All Charts
 const selectTransitTime = 100;
 
+// Lower Boundary for All Year Charts
+const yearLowerBound = 1970;
+
 
 // Build donut charts in Summary View
 function buildDonutChart(data, group) {
@@ -146,7 +149,7 @@ function buildBarChart(data, group) {
 
     // For year of collection, build bars for the whole range and fill in missing ones with 0
     if (group === "year_of_collection") {
-        const dataNums = Object.keys(data).filter((x) => !isNaN(x));
+        const dataNums = Object.keys(data).filter((x) => !isNaN(x) && Number(x) > yearLowerBound);
         const dataNumsMin = Math.min(...dataNums);
         const dataNumsMax = Math.max(...dataNums);
 
@@ -365,12 +368,17 @@ function buildStackedChart(data, type) {
     // Save max sum of values among all collection years
     let maxSum = 0;
 
+    // Flag for passing for leading empty years
+    let passedEmptyYears = false
+
     // Loop through all collection years
     for (const [group, keys] of Object.entries(data[type])) {
         // Comment out below "if block" to include samples with unknown collection year
         if (group === "NaN") { continue; }
 
-        groupSet.add(group);
+        // Comment out below "if block" to include samples below yearLowerBound
+        if (Number(group) < yearLowerBound) { continue; }
+
         let dataArrEle = {group: group};
         let curSum = 0;
         // Loop through all data keys and values in that year
@@ -382,7 +390,13 @@ function buildStackedChart(data, type) {
             dataArrEle[key] = val;
             curSum += val;
         }
-        dataArr.push(dataArrEle);
+        if (curSum > 0) { passedEmptyYears = true };
+        
+        if (passedEmptyYears == true) { 
+            groupSet.add(group)
+            dataArr.push(dataArrEle);
+        }
+        
         maxSum = Math.max(maxSum, curSum);
     }
 
