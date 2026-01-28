@@ -64,7 +64,7 @@ async function buildContent() {
     // Detect whole page is loaded to represent map is loaded
     // then await for data.json and alpha2.json before proceeding
     window.addEventListener("load", () => {
-        getData("data/data.json", "data/alpha2.json")
+        getData()
         .then( ([data, alpha2]) => {
             const map = mapObject.contentDocument
 
@@ -83,11 +83,11 @@ async function buildContent() {
 
 
 // Return promise on both fetching of data.json and alpha2.json
-async function getData(dataPath, alpha2Path) {
+async function getData() {
     return Promise.all(
         [
-            fetch(dataPath).then((res) => res.json()),
-            fetch(alpha2Path).then((res) => res.json()),
+            fetch("data/data.json").then((res) => res.json()),
+            fetch("data/alpha2.json").then((res) => res.json()),
         ]);
 }
 
