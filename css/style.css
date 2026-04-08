@@ -269,6 +269,16 @@ svg {
     font-size: 1.3em;
     font-weight: bold;
     white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.summary-view-right-container-container-subtitle {
+    font-size: 0.8em;
+    font-weight: normal;
+    color: #D3D3D3;
 }
 
 #by-country-view {

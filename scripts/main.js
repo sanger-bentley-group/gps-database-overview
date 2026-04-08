@@ -58,6 +58,10 @@ function filterInit() {
 
 // Build content based on data
 async function buildContent() {
+    // Lower Boundary for All Year Charts
+    const summaryYearLowerBound = 1990;
+    const countryYearLowerBound = 1970;
+
     const mapObject = document.querySelector("#world-map");
     const loadingOverlay = document.querySelector("#loading-overlay");
 
@@ -72,10 +76,10 @@ async function buildContent() {
             loadingOverlay.classList.add('hidden');
             
             buildSummaryLeft(data);
-            buildSummaryRight(data);
+            buildSummaryRight(data, summaryYearLowerBound);
             buildByCountryMap(data, map);
             buildByCountryList(data, alpha2);
-            byCountryInit(data, map, alpha2);
+            byCountryInit(data, map, alpha2, countryYearLowerBound);
 
         });
     });
@@ -115,11 +119,13 @@ function buildSummaryLeft(data) {
 
 
 // Build Summary View right panel
-function buildSummaryRight(data) {
+function buildSummaryRight(data, yearLowerBound) {
     // Build donut charts for upper row
     ["country", "vaccine_period", "manifestation"].forEach((group) => buildDonutChart(data.summary[group], group));
     // Build bar charts for lower row
-    ["year_of_collection", "age"].forEach((group) => buildBarChart(data.summary[group], group));
+    ["year_of_collection", "age"].forEach((group) => buildBarChart(data.summary[group], group, yearLowerBound));
+
+    document.querySelector("#summary-view-year-of-collection-lower-bound").innerHTML = yearLowerBound;
 }
 
 
@@ -153,7 +159,7 @@ function buildByCountryList(data, alpha2) {
 
 
 // Enable By Country View interactivity
-function byCountryInit(data, map, alpha2) {
+function byCountryInit(data, map, alpha2, yearLowerBound) {
     const countries = Object.keys(data.country);
     const countryInfobox = document.querySelector("#by-country-view-infobox");
     const countryInfoboxInstruction = document.querySelector("#by-country-view-infobox-instruction");
@@ -198,7 +204,7 @@ function byCountryInit(data, map, alpha2) {
                 byCountryViewDetails.classList.remove("hidden");
 
                 const countryAlpha2 = getAlpha2(e.target);
-                buildByCountryDetails(data.country[countryAlpha2], countryAlpha2, alpha2);
+                buildByCountryDetails(data.country[countryAlpha2], countryAlpha2, alpha2, yearLowerBound);
             });
         });
     });
@@ -251,7 +257,7 @@ function getAlpha2(elem) {
 
 
 // Build By Country Details
-function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
+function buildByCountryDetails(countryData, countryAlpha2, alpha2, yearLowerBound) {
     const byCountryViewTitle = document.querySelector("#by-country-view-details-title");
     const byAgeButton = document.querySelector("#by-age-button");
     const byManifestationButton = document.querySelector("#by-manifestation-button");
@@ -262,9 +268,9 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
     // Build stacked chart by age or by manifestation based on active button
     const activeButton = document.querySelector(".country-button-active");
     if (activeButton === byAgeButton) {
-        buildStackedChart(countryData, "age");
+        buildStackedChart(countryData, "age", yearLowerBound);
     } else if (activeButton === byManifestationButton) {
-        buildStackedChart(countryData, "manifestation");
+        buildStackedChart(countryData, "manifestation", yearLowerBound);
     }
 
     // Enable interactivity of By Age button
@@ -273,7 +279,7 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
         byAgeButton.setAttribute("disabled", "");
         byManifestationButton.classList.remove("country-button-active");
         byManifestationButton.removeAttribute("disabled");
-        buildStackedChart(countryData, "age");
+        buildStackedChart(countryData, "age", yearLowerBound);
     });
 
     // Enable interactivity of By Manifestation button
@@ -282,6 +288,6 @@ function buildByCountryDetails(countryData, countryAlpha2, alpha2) {
         byAgeButton.removeAttribute("disabled");
         byManifestationButton.classList.add("country-button-active");
         byManifestationButton.setAttribute("disabled", "");
-        buildStackedChart(countryData, "manifestation");
+        buildStackedChart(countryData, "manifestation", yearLowerBound);
     });
 }
