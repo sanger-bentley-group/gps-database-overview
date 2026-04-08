@@ -1,9 +1,6 @@
 // Selection Animation Transition Time for All Charts
 const selectTransitTime = 100;
 
-// Lower Boundary for All Year Charts
-const yearLowerBound = 1970;
-
 
 // Build donut charts in Summary View
 function buildDonutChart(data, group) {
@@ -136,7 +133,7 @@ function buildDonutChart(data, group) {
 
 
 // Build bar charts in Summary View
-function buildBarChart(data, group) {
+function buildBarChart(data, group, yearLowerBound) {
     const container = document.querySelector(`#summary-view-${group}-chart`);
 
     // Set dimension of the chart
@@ -149,7 +146,7 @@ function buildBarChart(data, group) {
 
     // For year of collection, build bars for the whole range and fill in missing ones with 0
     if (group === "year_of_collection") {
-        const dataNums = Object.keys(data).filter((x) => !isNaN(x) && Number(x) > yearLowerBound);
+        const dataNums = Object.keys(data).filter((x) => !isNaN(x) && Number(x) >= yearLowerBound);
         const dataNumsMin = Math.min(...dataNums);
         const dataNumsMax = Math.max(...dataNums);
 
@@ -333,7 +330,7 @@ function buildBarChart(data, group) {
 }
 
 // Build stacked bar charts in Country View
-function buildStackedChart(data, type) {
+function buildStackedChart(data, type, yearLowerBound) {
     const container = document.querySelector("#by-country-view-details-content-chart");
 
     // Clear container
@@ -371,13 +368,19 @@ function buildStackedChart(data, type) {
     // Flag for passing for leading empty years
     let passedEmptyYears = false
 
+    // Flag for exceeding year lower bound
+    let exceededYearLowerBound = false
+
+    // Flag for skipped unknown collection year
+    let skippedUnknownYear = false;
+
     // Loop through all collection years
     for (const [group, keys] of Object.entries(data[type])) {
         // Comment out below "if block" to include samples with unknown collection year
-        if (group === "NaN") { continue; }
+        if (group === "NaN") { skippedUnknownYear = true; continue; }
 
         // Comment out below "if block" to include samples below yearLowerBound
-        if (Number(group) < yearLowerBound) { continue; }
+        if (Number(group) < yearLowerBound) { exceededYearLowerBound = true; continue; }
 
         let dataArrEle = {group: group};
         let curSum = 0;
@@ -433,11 +436,29 @@ function buildStackedChart(data, type) {
             .attr("class", `label-${type}`);
     
     // Add X-axis label
-    chart.append("text")             
+    const xAxisLabel = chart.append("text")             
         .attr("transform", `translate(${width/2}, ${height + margin.top - 20})`)
         .style("text-anchor", "middle")
+
+    xAxisLabel.append("tspan")
         .text("Year of Collection");
 
+    if (exceededYearLowerBound || skippedUnknownYear) {
+        if (exceededYearLowerBound && skippedUnknownYear) {
+            xAxisLabel.append("tspan")
+                .style("fill", "#D3D3D3")
+                .text(` (Years below ${yearLowerBound} and unknowns are hidden)`);
+        } else if (exceededYearLowerBound) {
+            xAxisLabel.append("tspan")
+                .style("fill", "#D3D3D3")
+                .text(` (Years below ${yearLowerBound} are hidden)`);
+        } else if (skippedUnknownYear) {
+            xAxisLabel.append("tspan")
+                .style("fill", "#D3D3D3")
+                .text(` (Unknowns are hidden)`);
+        }
+    }
+        
     // Add Y-axis grid lines and labels
     chart.append("g")
         .call(d3.axisLeft(yScale).ticks(5).tickSize(-width));
